@@ -19,7 +19,7 @@ const capabilityPath = path.join(
 const capability = fs.readFileSync(capabilityPath);
 const capabilityDocument = JSON.parse(capability.toString('utf8'));
 const tag = `profiles-v${version}`;
-const base = `https://github.com/mr-aydemir/MakerSync-Printer-Profiles/releases/download/${tag}`;
+const base = `https://github.com/mr-aydemir/MakerSpell-Printer-Profiles/releases/download/${tag}`;
 const manifest = {
   version,
   downloadUrl: `${base}/profiles.zip`,
@@ -38,4 +38,3 @@ fs.writeFileSync(
   `${JSON.stringify(manifest, null, 2)}\n`,
 );
 console.log(`Packaged ${archive.length} bytes for ${tag}.`);
-

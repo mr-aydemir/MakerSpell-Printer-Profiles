@@ -2,7 +2,7 @@
 
 1. Fork this repository and create a focused branch.
 2. Change only the affected vendor/profile files.
-3. For a MakerSync control profile, update or add a file below
+3. For a MakerSpell control profile, update or add a file below
    `community/profiles/` and validate it against
    `community/schema/profile.schema.json`.
 4. Describe the exact printer model, firmware version, transport, and physical
@@ -10,7 +10,6 @@
 5. Never include passwords, cookies, tokens, private addresses, or user data.
 
 Control profiles are declarative. New proprietary protocols require a reviewed
-transport adapter in the MakerSync application before a JSON profile can use
+transport adapter in the MakerSpell application before a JSON profile can use
 them. Pull requests affecting upload, print-start, G-code transformation, or
 device-control permissions require owner review.
-

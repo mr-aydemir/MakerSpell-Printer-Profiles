@@ -1,6 +1,6 @@
-# MakerSync Printer Profiles
+# MakerSpell Printer Profiles
 
-Community-maintained printer, process, filament, and MakerSync control profiles.
+Community-maintained printer, process, filament, and MakerSpell control profiles.
 
 ## Repository layout
 
@@ -9,7 +9,7 @@ Community-maintained printer, process, filament, and MakerSync control profiles.
 - `metadata/profiles-sources.json`: pinned upstream provenance.
 - `catalog/profiles-manifest.json`: integrity metadata for the latest release.
 
-Profiles are distributed through GitHub Releases. MakerSync downloads
+Profiles are distributed through GitHub Releases. MakerSpell downloads
 `profiles-manifest.json`, verifies the archive size and SHA-256 digest, and
 only then installs the package.
 
@@ -21,4 +21,3 @@ URLs, or executable scripts.
 
 The base profile data is derived from the projects identified in
 `metadata/profiles-sources.json`. See [NOTICE.md](NOTICE.md) for provenance.
-

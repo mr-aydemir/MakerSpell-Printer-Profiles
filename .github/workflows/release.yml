@@ -31,4 +31,4 @@ jobs:
           gh release create "profiles-v${{ inputs.version }}"
           dist/profiles.zip dist/profiles-manifest.json
           --title "Printer profiles ${{ inputs.version }}"
-          --notes "Validated MakerSync printer profile bundle ${{ inputs.version }}."
+          --notes "Validated MakerSpell printer profile bundle ${{ inputs.version }}."

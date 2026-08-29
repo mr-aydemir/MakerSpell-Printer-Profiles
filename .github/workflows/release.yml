@@ -19,7 +19,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node scripts/validate.mjs
+          cache: npm
+      - run: npm ci
+      - run: npm test
       - name: Package archive and manifest
         run: node scripts/package-release.mjs "${{ inputs.version }}"
       - name: Publish immutable release
@@ -30,4 +32,3 @@ jobs:
           dist/profiles.zip dist/profiles-manifest.json
           --title "Printer profiles ${{ inputs.version }}"
           --notes "Validated MakerSync printer profile bundle ${{ inputs.version }}."
-

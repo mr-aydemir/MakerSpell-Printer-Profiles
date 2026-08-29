@@ -1,0 +1,69 @@
+name: Printer adapter correction
+description: Report incorrect connection, capability, UI, or print-option behavior.
+title: "[adapter]: "
+labels: ["printer-adapter", "needs-verification"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Compare your printer with `built-in/registry-v1.json`. Never include passwords, tokens, access codes, public IP addresses, or private user data.
+  - type: input
+    id: adapter
+    attributes:
+      label: Adapter id
+      description: The exact `id` shown in `built-in/registry-v1.json`.
+      placeholder: snapmaker_moonraker
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Printer model and firmware
+      placeholder: Snapmaker U1 / firmware 1.2.3
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Discovery or connection
+        - Authentication
+        - Status or telemetry
+        - Camera
+        - Files, upload, or print start
+        - Job controls
+        - Fans, temperatures, motion, or light
+        - Filament mapping
+        - Calibration or print options
+        - Other UI capability
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+      description: Describe what MakerSpell currently shows or sends.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Describe the verified behavior that should replace it.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Verification evidence
+      description: Sanitized API responses, macro inventory, protocol documentation, screenshots, or repeatable test steps.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed credentials, tokens, access codes, private addresses, and personal data.
+          required: true

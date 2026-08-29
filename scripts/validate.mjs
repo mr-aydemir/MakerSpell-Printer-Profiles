@@ -3,7 +3,13 @@ import path from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
-const roots = ['profiles', 'community/profiles', 'community/schema'];
+const roots = [
+  'profiles',
+  'community/profiles',
+  'community/schema',
+  'built-in',
+  'schema',
+];
 let files = 0;
 for (const root of roots) {
   if (!fs.existsSync(root)) throw new Error(`Missing required directory: ${root}`);
@@ -43,6 +49,21 @@ if (!validateCatalog(catalog)) {
   throw new Error(
     `catalog/community-v1.json failed schema validation:\n${ajv.errorsText(
       validateCatalog.errors,
+      { separator: '\n' },
+    )}`,
+  );
+}
+const builtInSchema = JSON.parse(
+  fs.readFileSync('schema/builtin-registry.schema.json', 'utf8'),
+);
+const validateBuiltIn = ajv.compile(builtInSchema);
+const builtIn = JSON.parse(
+  fs.readFileSync('built-in/registry-v1.json', 'utf8'),
+);
+if (!validateBuiltIn(builtIn)) {
+  throw new Error(
+    `built-in/registry-v1.json failed schema validation:\n${ajv.errorsText(
+      validateBuiltIn.errors,
       { separator: '\n' },
     )}`,
   );

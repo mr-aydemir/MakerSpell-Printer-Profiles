@@ -7,7 +7,9 @@
    `community/schema/profile.schema.json`.
 4. Describe the exact printer model, firmware version, transport, and physical
    operations tested.
-5. Never include passwords, cookies, tokens, private addresses, or user data.
+5. Compare the proposal with `built-in/registry-v1.json`. If the shipped
+   behavior is wrong, identify the adapter id and include firmware evidence.
+6. Never include passwords, cookies, tokens, private addresses, or user data.
 
 Control profiles are declarative. New proprietary protocols require a reviewed
 transport adapter in the MakerSpell application before a JSON profile can use

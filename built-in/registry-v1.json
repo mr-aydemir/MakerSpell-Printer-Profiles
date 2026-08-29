@@ -1,0 +1,1044 @@
+{
+  "$schema": "../schema/builtin-registry.schema.json",
+  "schemaVersion": 1,
+  "application": {
+    "name": "MakerSpell",
+    "version": "1.0.14+28",
+    "sourceRepository": "https://github.com/mr-aydemir/MakerSync",
+    "registrySource": "makersync_app/lib/services/printer_transport_registry.dart",
+    "generatedBy": "makersync_app/tool/export_builtin_printer_references.dart"
+  },
+  "notice": "This is a review snapshot of compiled-in adapters. Community JSON profiles are activated only after schema validation and catalog approval; this file does not execute remote code.",
+  "adapters": [
+    {
+      "order": 0,
+      "id": "anycubic_lan",
+      "displayName": "Anycubic LAN",
+      "supportLevel": "experimental",
+      "sourceFile": "makersync_app/lib/services/transports/anycubic_lan_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_anycubic-lan._tcp.local"
+        ],
+        "defaultPorts": [
+          18910,
+          18088
+        ],
+        "protocols": [
+          "MQTT",
+          "HTTP"
+        ],
+        "authentication": "pairing",
+        "probeSummary": "Signed Anycubic LAN info query and advertised upload URL."
+      },
+      "capabilities": {
+        "baseline": [
+          "materials",
+          "multiMaterial",
+          "status"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ],
+        "conditional": [
+          "upload, startPrint and camera require their experimental feature gates"
+        ]
+      },
+      "contracts": [
+        "jobControl",
+        "deviceControl"
+      ],
+      "ui": {
+        "sections": [
+          "status",
+          "activeJobControls",
+          "deviceControls",
+          "filaments"
+        ],
+        "jobControls": [
+          "pause",
+          "resume",
+          "cancel"
+        ],
+        "deviceControls": [
+          "nozzleTemperature",
+          "bedTemperature",
+          "partFan",
+          "light",
+          "speed"
+        ],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 1,
+      "id": "bambu_lan",
+      "displayName": "Bambu Lab LAN",
+      "supportLevel": "protocolCompatible",
+      "sourceFile": "makersync_app/lib/services/transports/bambu_lan_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_bambu-lan._tcp.local"
+        ],
+        "defaultPorts": [
+          8883
+        ],
+        "protocols": [
+          "MQTTS",
+          "FTPS"
+        ],
+        "authentication": "accessCode",
+        "probeSummary": "Authenticated Bambu LAN MQTT handshake."
+      },
+      "capabilities": {
+        "baseline": [
+          "camera",
+          "materials",
+          "multiMaterial",
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ],
+        "conditional": [
+          "upload, startPrint, camera and native calibration require Developer Mode"
+        ]
+      },
+      "contracts": [
+        "printPreparation",
+        "dynamicPrintPreparation",
+        "jobControl",
+        "deviceControl"
+      ],
+      "ui": {
+        "sections": [
+          "status",
+          "activeJobControls",
+          "deviceControls",
+          "camera",
+          "filaments"
+        ],
+        "jobControls": [
+          "pause",
+          "resume",
+          "cancel"
+        ],
+        "deviceControls": [
+          "nozzleTemperature",
+          "bedTemperature",
+          "partFan",
+          "light",
+          "speed"
+        ],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "bambuNative",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": true,
+          "dynamicCandidates": [
+            "calibration",
+            "autoLeveling",
+            "flowCalibration",
+            "timelapseCapture"
+          ]
+        }
+      }
+    },
+    {
+      "order": 2,
+      "id": "creality_local",
+      "displayName": "Creality Local",
+      "supportLevel": "verified",
+      "sourceFile": "makersync_app/lib/services/transports/creality_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_creality._tcp.local",
+          "_cxswbox._tcp.local"
+        ],
+        "defaultPorts": [
+          80,
+          9999
+        ],
+        "protocols": [
+          "HTTP",
+          "WebSocket"
+        ],
+        "authentication": "none",
+        "probeSummary": "Creality /info signature plus model and MAC evidence."
+      },
+      "capabilities": {
+        "baseline": [
+          "camera",
+          "controlPanel",
+          "excludeObjects",
+          "materials",
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ],
+        "conditional": [
+          "multiMaterial is shown after physical CFS slots are reported",
+          "auto-level is enabled only after a live structured status response"
+        ]
+      },
+      "contracts": [
+        "localFiles",
+        "printPreparation",
+        "dynamicPrintPreparation",
+        "printHistory",
+        "timelapses",
+        "jobControl",
+        "excludeObjects",
+        "deviceControl",
+        "filamentSlotControl"
+      ],
+      "ui": {
+        "sections": [
+          "status",
+          "activeJobControls",
+          "deviceControls",
+          "camera",
+          "localFiles",
+          "filaments",
+          "filamentEditor",
+          "excludeObjects",
+          "printHistory",
+          "timelapses",
+          "webControlPanel"
+        ],
+        "jobControls": [
+          "pause",
+          "resume",
+          "cancel"
+        ],
+        "deviceControls": [
+          "nozzleTemperature",
+          "bedTemperature",
+          "partFan",
+          "light",
+          "speed",
+          "move",
+          "home"
+        ],
+        "printOptions": {
+          "filamentMappingMode": "transportManaged",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "transportManaged",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": true,
+          "dynamicCandidates": [
+            "calibration",
+            "autoLeveling",
+            "flowCalibration",
+            "timelapseCapture"
+          ]
+        }
+      }
+    },
+    {
+      "order": 3,
+      "id": "snapmaker_moonraker",
+      "displayName": "Snapmaker (Moonraker)",
+      "supportLevel": "verified",
+      "sourceFile": "makersync_app/lib/services/transports/snapmaker_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_snapmaker._tcp.local"
+        ],
+        "defaultPorts": [
+          7125,
+          80
+        ],
+        "protocols": [
+          "Moonraker HTTP",
+          "Moonraker WebSocket"
+        ],
+        "authentication": "none",
+        "probeSummary": "Snapmaker product_info.json on a Moonraker endpoint."
+      },
+      "capabilities": {
+        "baseline": [
+          "camera",
+          "controlPanel",
+          "excludeObjects",
+          "materials",
+          "multiMaterial",
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ],
+        "conditional": [
+          "calibration options are discovered from firmware objects and G-code help"
+        ]
+      },
+      "contracts": [
+        "localFiles",
+        "printPreparation",
+        "dynamicPrintPreparation",
+        "gcodePrintOptions",
+        "printHistory",
+        "timelapses",
+        "jobControl",
+        "excludeObjects",
+        "deviceControl",
+        "extruderControl",
+        "filamentSlotControl"
+      ],
+      "ui": {
+        "sections": [
+          "status",
+          "activeJobControls",
+          "deviceControls",
+          "camera",
+          "localFiles",
+          "filaments",
+          "filamentEditor",
+          "excludeObjects",
+          "printHistory",
+          "timelapses",
+          "webControlPanel"
+        ],
+        "jobControls": [
+          "pause",
+          "resume",
+          "cancel"
+        ],
+        "deviceControls": [
+          "nozzleTemperature",
+          "bedTemperature",
+          "partFan",
+          "speed",
+          "move",
+          "home"
+        ],
+        "printOptions": {
+          "filamentMappingMode": "toolCommands",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": true,
+          "dynamicCandidates": [
+            "calibration",
+            "autoLeveling",
+            "flowCalibration",
+            "timelapseCapture"
+          ]
+        }
+      }
+    },
+    {
+      "order": 4,
+      "id": "qidi_moonraker",
+      "displayName": "Qidi (Moonraker)",
+      "supportLevel": "verified",
+      "sourceFile": "makersync_app/lib/services/transports/qidi_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_qidi-moonraker._tcp.local"
+        ],
+        "defaultPorts": [
+          7125,
+          10088
+        ],
+        "protocols": [
+          "Moonraker HTTP",
+          "Moonraker WebSocket"
+        ],
+        "authentication": "none",
+        "probeSummary": "Qidi printer.cfg signature on Moonraker."
+      },
+      "capabilities": {
+        "baseline": [
+          "camera",
+          "controlPanel",
+          "excludeObjects",
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [
+        "localFiles",
+        "printPreparation",
+        "dynamicPrintPreparation",
+        "printHistory",
+        "timelapses",
+        "jobControl",
+        "excludeObjects",
+        "deviceControl",
+        "extruderControl"
+      ],
+      "ui": {
+        "sections": [
+          "status",
+          "activeJobControls",
+          "deviceControls",
+          "camera",
+          "localFiles",
+          "excludeObjects",
+          "printHistory",
+          "timelapses",
+          "webControlPanel"
+        ],
+        "jobControls": [
+          "pause",
+          "resume",
+          "cancel"
+        ],
+        "deviceControls": [
+          "nozzleTemperature",
+          "bedTemperature",
+          "partFan",
+          "speed",
+          "move",
+          "home"
+        ],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": true,
+          "dynamicCandidates": [
+            "calibration",
+            "autoLeveling",
+            "flowCalibration",
+            "timelapseCapture"
+          ]
+        }
+      }
+    },
+    {
+      "order": 5,
+      "id": "elegoo_link_cc2",
+      "displayName": "Elegoo Link (CC2)",
+      "supportLevel": "experimental",
+      "sourceFile": "makersync_app/lib/services/transports/elegoo_link_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_elegoo-link._tcp.local"
+        ],
+        "defaultPorts": [
+          80
+        ],
+        "protocols": [
+          "HTTP"
+        ],
+        "authentication": "accessCode",
+        "probeSummary": "Elegoo Link discovery signature or CC2 API response."
+      },
+      "capabilities": {
+        "baseline": [
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [],
+      "ui": {
+        "sections": [],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 6,
+      "id": "elegoo_sdcp",
+      "displayName": "Elegoo SDCP",
+      "supportLevel": "experimental",
+      "sourceFile": "makersync_app/lib/services/transports/elegoo_sdcp_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_sdcp._tcp.local"
+        ],
+        "defaultPorts": [
+          3030
+        ],
+        "protocols": [
+          "HTTP",
+          "WebSocket"
+        ],
+        "authentication": "token",
+        "probeSummary": "SDCP v3 status handshake."
+      },
+      "capabilities": {
+        "baseline": [
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [],
+      "ui": {
+        "sections": [
+          "status"
+        ],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 7,
+      "id": "flashforge_http",
+      "displayName": "FlashForge LAN",
+      "supportLevel": "verified",
+      "sourceFile": "makersync_app/lib/services/transports/flashforge_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_flashforge-http._tcp.local"
+        ],
+        "defaultPorts": [
+          8898
+        ],
+        "protocols": [
+          "HTTP"
+        ],
+        "authentication": "none",
+        "probeSummary": "Modern FlashForge LAN product/status signature."
+      },
+      "capabilities": {
+        "baseline": [
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [],
+      "ui": {
+        "sections": [
+          "status"
+        ],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 8,
+      "id": "flashair",
+      "displayName": "FlashAir",
+      "supportLevel": "experimental",
+      "sourceFile": "makersync_app/lib/services/transports/flashair_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_flashair._tcp.local"
+        ],
+        "defaultPorts": [
+          80
+        ],
+        "protocols": [
+          "HTTP"
+        ],
+        "authentication": "none",
+        "probeSummary": "FlashAir command endpoint signature."
+      },
+      "capabilities": {
+        "baseline": [
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [],
+      "ui": {
+        "sections": [],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 9,
+      "id": "astrobox",
+      "displayName": "AstroBox",
+      "supportLevel": "experimental",
+      "sourceFile": "makersync_app/lib/services/transports/astrobox_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_astrobox._tcp.local"
+        ],
+        "defaultPorts": [
+          80
+        ],
+        "protocols": [
+          "HTTP"
+        ],
+        "authentication": "apiKey",
+        "probeSummary": "AstroBox API/version response."
+      },
+      "capabilities": {
+        "baseline": [
+          "controlPanel",
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [
+        "deviceControl"
+      ],
+      "ui": {
+        "sections": [
+          "status",
+          "deviceControls",
+          "webControlPanel"
+        ],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 10,
+      "id": "mks",
+      "displayName": "MKS WiFi",
+      "supportLevel": "experimental",
+      "sourceFile": "makersync_app/lib/services/transports/mks_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_mks._tcp.local"
+        ],
+        "defaultPorts": [
+          80,
+          8080
+        ],
+        "protocols": [
+          "HTTP",
+          "TCP console"
+        ],
+        "authentication": "none",
+        "probeSummary": "MKS TCP console acknowledges M105."
+      },
+      "capabilities": {
+        "baseline": [
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [],
+      "ui": {
+        "sections": [
+          "status"
+        ],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 11,
+      "id": "esp3d",
+      "displayName": "ESP3D",
+      "supportLevel": "experimental",
+      "sourceFile": "makersync_app/lib/services/transports/esp3d_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_esp3d._tcp.local"
+        ],
+        "defaultPorts": [
+          80
+        ],
+        "protocols": [
+          "HTTP"
+        ],
+        "authentication": "optionalToken",
+        "probeSummary": "ESP3D command/status endpoint signature."
+      },
+      "capabilities": {
+        "baseline": [
+          "controlPanel",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [],
+      "ui": {
+        "sections": [
+          "webControlPanel"
+        ],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 12,
+      "id": "duet_rrf",
+      "displayName": "Duet / RepRapFirmware",
+      "supportLevel": "protocolCompatible",
+      "sourceFile": "makersync_app/lib/services/transports/duet_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_duet._tcp.local",
+          "_reprap._tcp.local"
+        ],
+        "defaultPorts": [
+          80
+        ],
+        "protocols": [
+          "RepRapFirmware HTTP"
+        ],
+        "authentication": "password",
+        "probeSummary": "RepRapFirmware rr_status/rr_model API response."
+      },
+      "capabilities": {
+        "baseline": [
+          "controlPanel",
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [],
+      "ui": {
+        "sections": [
+          "status",
+          "webControlPanel"
+        ],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 13,
+      "id": "repetier_server",
+      "displayName": "Repetier Server",
+      "supportLevel": "protocolCompatible",
+      "sourceFile": "makersync_app/lib/services/transports/repetier_server_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_repetier-server._tcp.local"
+        ],
+        "defaultPorts": [
+          3344
+        ],
+        "protocols": [
+          "Repetier Server HTTP"
+        ],
+        "authentication": "apiKey",
+        "probeSummary": "Repetier Server printer-list API response."
+      },
+      "capabilities": {
+        "baseline": [
+          "controlPanel",
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [
+        "managedPrinters"
+      ],
+      "ui": {
+        "sections": [
+          "status",
+          "webControlPanel"
+        ],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 14,
+      "id": "prusalink",
+      "displayName": "PrusaLink",
+      "supportLevel": "protocolCompatible",
+      "sourceFile": "makersync_app/lib/services/transports/prusalink_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_prusalink._tcp.local"
+        ],
+        "defaultPorts": [
+          80
+        ],
+        "protocols": [
+          "PrusaLink HTTP"
+        ],
+        "authentication": "digestOrApiKey",
+        "probeSummary": "PrusaLink status/version headers and API response."
+      },
+      "capabilities": {
+        "baseline": [
+          "controlPanel",
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [],
+      "ui": {
+        "sections": [
+          "status",
+          "webControlPanel"
+        ],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 15,
+      "id": "octoprint",
+      "displayName": "OctoPrint",
+      "supportLevel": "protocolCompatible",
+      "sourceFile": "makersync_app/lib/services/transports/octoprint_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_octoprint._tcp.local"
+        ],
+        "defaultPorts": [
+          5000
+        ],
+        "protocols": [
+          "OctoPrint HTTP"
+        ],
+        "authentication": "apiKey",
+        "probeSummary": "OctoPrint API/version response."
+      },
+      "capabilities": {
+        "baseline": [
+          "controlPanel",
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ]
+      },
+      "contracts": [
+        "timelapses",
+        "deviceControl"
+      ],
+      "ui": {
+        "sections": [
+          "status",
+          "deviceControls",
+          "timelapses",
+          "webControlPanel"
+        ],
+        "jobControls": [],
+        "deviceControls": [],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": false
+        }
+      }
+    },
+    {
+      "order": 16,
+      "id": "moonraker",
+      "displayName": "Moonraker",
+      "supportLevel": "protocolCompatible",
+      "sourceFile": "makersync_app/lib/services/transports/moonraker_transport.dart",
+      "connection": {
+        "serviceTypes": [
+          "_moonraker._tcp.local",
+          "_klipper._tcp.local"
+        ],
+        "defaultPorts": [
+          7125
+        ],
+        "protocols": [
+          "Moonraker HTTP",
+          "Moonraker WebSocket"
+        ],
+        "authentication": "optionalToken",
+        "probeSummary": "Moonraker /server/info response."
+      },
+      "capabilities": {
+        "baseline": [
+          "controlPanel",
+          "excludeObjects",
+          "materials",
+          "startPrint",
+          "status",
+          "upload"
+        ],
+        "supportedFileTypes": [
+          "gcode"
+        ],
+        "conditional": [
+          "fans, cameras, extruders and calibration macros are discovered live from firmware inventory"
+        ]
+      },
+      "contracts": [
+        "localFiles",
+        "printPreparation",
+        "dynamicPrintPreparation",
+        "printHistory",
+        "timelapses",
+        "jobControl",
+        "excludeObjects",
+        "deviceControl",
+        "extruderControl"
+      ],
+      "ui": {
+        "sections": [
+          "status",
+          "activeJobControls",
+          "deviceControls",
+          "localFiles",
+          "filaments",
+          "excludeObjects",
+          "printHistory",
+          "timelapses",
+          "webControlPanel"
+        ],
+        "jobControls": [
+          "pause",
+          "resume",
+          "cancel"
+        ],
+        "deviceControls": [
+          "nozzleTemperature",
+          "bedTemperature",
+          "partFan",
+          "speed",
+          "move",
+          "home"
+        ],
+        "printOptions": {
+          "filamentMappingMode": "unsupported",
+          "calibrationMode": "unsupported",
+          "autoLevelingMode": "unsupported",
+          "supportsFlowCalibration": false,
+          "supportsTimelapseCapture": false,
+          "resolvedFromFirmware": true,
+          "dynamicCandidates": [
+            "calibration",
+            "autoLeveling",
+            "flowCalibration",
+            "timelapseCapture"
+          ]
+        }
+      }
+    }
+  ]
+}

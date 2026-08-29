@@ -1,0 +1,367 @@
+{
+  "schemaVersion": 1,
+  "version": "1.6.0",
+  "engine": {
+    "name": "OrcaSlicer",
+    "version": "2.4.2"
+  },
+  "capabilityDefinitions": {
+    "belt_printer": {
+      "version": "1.0.0",
+      "description": "Continuous-belt build surface and belt-specific toolpath behavior.",
+      "source": "Creality Print",
+      "sourceKeys": [
+        "machine_is_belt"
+      ],
+      "engineStatus": "supported"
+    },
+    "creality_cfs": {
+      "version": "0.2.0",
+      "description": "Creality CFS multi-material workflow.",
+      "source": "Creality Print",
+      "sourceKeys": [
+        "multicolor_method",
+        "creality_flush_time",
+        "flush_box_first_clean_length",
+        "flush_box_need_clean_length",
+        "flush_box_need_clean_length_max",
+        "cfs_skeleton_flush"
+      ],
+      "engineStatus": "supported",
+      "activation": {
+        "scope": "device",
+        "mode": "compiled_exact_allowlist"
+      },
+      "validation": {
+        "status": "passed",
+        "device": "Creality Hi Combo",
+        "completedAt": "2026-08-22T18:31:00.481103+03:00",
+        "colors": 2,
+        "toolchanges": 1,
+        "result": "completed",
+        "gcodeSha256": "2dc1bc0178a04d786e9308c96522aac1dcc60c23dfad4fcea2e432d3c1143340"
+      }
+    },
+    "vendor_flush_tuning": {
+      "version": "0.2.0",
+      "description": "OEM flush-volume multiplier used by multi-material systems.",
+      "source": "Creality Print",
+      "sourceKeys": [
+        "default_flush_multiplier"
+      ],
+      "engineStatus": "supported"
+    },
+    "pre_start_fan": {
+      "version": "0.1.0",
+      "description": "Time-based overhang fan look-ahead configured by the selected filament profile.",
+      "source": "Bambu Studio",
+      "sourceKeys": [
+        "pre_start_fan_time"
+      ],
+      "engineStatus": "debug",
+      "activation": {
+        "scope": "filament",
+        "mode": "inherited_profile_key_positive",
+        "keys": [
+          "pre_start_fan_time"
+        ]
+      }
+    },
+    "filament_ramming": {
+      "version": "0.1.0",
+      "description": "Constrained reverse wipe-tower travel after filament or hotend-change ramming.",
+      "source": "QIDI Studio / Bambu Studio",
+      "sourceKeys": [
+        "filament_ramming_travel_time",
+        "filament_ramming_travel_time_nc"
+      ],
+      "engineStatus": "debug",
+      "activation": {
+        "scope": "filament",
+        "mode": "inherited_profile_key_positive",
+        "keys": [
+          "filament_ramming_travel_time",
+          "filament_ramming_travel_time_nc"
+        ]
+      }
+    },
+    "enclosed_chamber": {
+      "version": "1.0.0",
+      "description": "The printer has an enclosed build chamber.",
+      "source": "MakerSpell device metadata",
+      "sourceKeys": [],
+      "engineStatus": "supported"
+    },
+    "multi_material": {
+      "version": "1.0.0",
+      "description": "The selected machine profile supports more than one material/tool slot.",
+      "source": "OrcaSlicer machine profile",
+      "sourceKeys": [
+        "single_extruder_multi_material"
+      ],
+      "engineStatus": "supported"
+    },
+    "toolchanger": {
+      "version": "1.0.0",
+      "description": "The printer changes physical tools or toolheads.",
+      "source": "OrcaSlicer machine profile",
+      "sourceKeys": [
+        "extruder_offset"
+      ],
+      "engineStatus": "supported"
+    },
+    "maintenance_guidance": {
+      "version": "1.0.0",
+      "description": "Usage-based maintenance intervals supplied as device metadata.",
+      "source": "MakerSpell device capability metadata",
+      "sourceKeys": [],
+      "engineStatus": "supported"
+    }
+  },
+  "devices": [
+    {
+      "vendor": "Creality",
+      "models": [
+        "Creality Hi"
+      ],
+      "capabilities": [
+        "creality_cfs",
+        "vendor_flush_tuning",
+        "multi_material",
+        "maintenance_guidance"
+      ],
+      "profileOverrides": {
+        "multicolor_method": "1",
+        "cfs_skeleton_flush": "0"
+      },
+      "limits": {
+        "materialSlots": 4
+      },
+      "maintenance": {
+        "build_plate": {
+          "printHours": 100
+        },
+        "belts": {
+          "printHours": 500
+        },
+        "nozzle": {
+          "printHours": 500,
+          "filamentGrams": 5000
+        },
+        "cfs_path": {
+          "printHours": 250,
+          "filamentGrams": 2500
+        }
+      }
+    },
+    {
+      "vendor": "Creality",
+      "models": [
+        "Creality K1",
+        "Creality K1C",
+        "Creality K1 Max"
+      ],
+      "capabilities": [
+        "enclosed_chamber",
+        "maintenance_guidance"
+      ],
+      "profileOverrides": {},
+      "maintenance": {
+        "build_plate": {
+          "printHours": 100
+        },
+        "belts": {
+          "printHours": 500
+        },
+        "nozzle": {
+          "printHours": 500,
+          "filamentGrams": 5000
+        }
+      }
+    },
+    {
+      "vendor": "Creality",
+      "models": [
+        "Creality CR-30"
+      ],
+      "capabilities": [
+        "belt_printer",
+        "maintenance_guidance"
+      ],
+      "profileOverrides": {
+        "machine_is_belt": "1"
+      },
+      "maintenance": {
+        "belt_surface": {
+          "printHours": 100
+        },
+        "belts": {
+          "printHours": 300
+        },
+        "nozzle": {
+          "printHours": 500,
+          "filamentGrams": 5000
+        }
+      }
+    },
+    {
+      "vendor": "Creality",
+      "models": [
+        "Creality Ender-3 V3 Mega"
+      ],
+      "capabilities": [
+        "creality_cfs",
+        "vendor_flush_tuning",
+        "multi_material",
+        "maintenance_guidance"
+      ],
+      "profileOverrides": {
+        "multicolor_method": "1",
+        "cfs_skeleton_flush": "0"
+      },
+      "limits": {
+        "materialSlots": 4
+      },
+      "maintenance": {
+        "build_plate": {
+          "printHours": 100
+        },
+        "belts": {
+          "printHours": 500
+        },
+        "nozzle": {
+          "printHours": 500,
+          "filamentGrams": 5000
+        },
+        "cfs_path": {
+          "printHours": 250,
+          "filamentGrams": 2500
+        }
+      }
+    },
+    {
+      "vendor": "Creality",
+      "models": [
+        "Creality SPARKX i7",
+        "Creality K2",
+        "Creality K2 Pro"
+      ],
+      "capabilities": [
+        "creality_cfs",
+        "vendor_flush_tuning",
+        "enclosed_chamber",
+        "multi_material",
+        "maintenance_guidance"
+      ],
+      "profileOverrides": {
+        "multicolor_method": "1",
+        "cfs_skeleton_flush": "1"
+      },
+      "limits": {
+        "materialSlots": 4
+      },
+      "maintenance": {
+        "build_plate": {
+          "printHours": 100
+        },
+        "belts": {
+          "printHours": 500
+        },
+        "nozzle": {
+          "printHours": 500,
+          "filamentGrams": 5000
+        },
+        "cfs_path": {
+          "printHours": 250,
+          "filamentGrams": 2500
+        }
+      }
+    },
+    {
+      "vendor": "Creality",
+      "models": [
+        "Creality K2 Plus"
+      ],
+      "capabilities": [
+        "creality_cfs",
+        "enclosed_chamber",
+        "multi_material",
+        "maintenance_guidance"
+      ],
+      "profileOverrides": {
+        "multicolor_method": "1",
+        "cfs_skeleton_flush": "1"
+      },
+      "limits": {
+        "materialSlots": 4
+      },
+      "maintenance": {
+        "build_plate": {
+          "printHours": 100
+        },
+        "belts": {
+          "printHours": 500
+        },
+        "nozzle": {
+          "printHours": 500,
+          "filamentGrams": 5000
+        },
+        "cfs_path": {
+          "printHours": 250,
+          "filamentGrams": 2500
+        }
+      }
+    },
+    {
+      "vendor": "Snapmaker",
+      "models": [
+        "Snapmaker U1"
+      ],
+      "capabilities": [
+        "multi_material",
+        "toolchanger",
+        "maintenance_guidance"
+      ],
+      "profileOverrides": {},
+      "limits": {
+        "materialSlots": 4
+      },
+      "maintenance": {
+        "build_plate": {
+          "printHours": 100
+        },
+        "linear_motion": {
+          "printHours": 300
+        },
+        "nozzle": {
+          "printHours": 500,
+          "filamentGrams": 5000
+        },
+        "toolheads": {
+          "printHours": 250
+        }
+      }
+    }
+  ],
+  "safety": {
+    "compiledProfileOverrideKeys": [
+      "machine_is_belt",
+      "multicolor_method",
+      "creality_flush_time",
+      "flush_box_first_clean_length",
+      "flush_box_need_clean_length",
+      "flush_box_need_clean_length_max",
+      "cfs_skeleton_flush",
+      "default_flush_multiplier"
+    ],
+    "compiledSupportedFilamentCapabilities": [],
+    "compiledDebugFilamentCapabilities": [
+      "pre_start_fan",
+      "filament_ramming"
+    ],
+    "unknownCapabilities": "ignore",
+    "debugOverrides": "debug_build_only",
+    "debugFilamentSettings": "debug_build_only",
+    "pendingEngineOverrides": "ignore"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://makerspell.com/schemas/community-printer-profile-v1.json",
+  "title": "MakerSpell community printer profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "name", "version", "baseTransport", "match", "permissions", "operations", "ui"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)+$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "description": { "type": "string", "maxLength": 500 },
+    "author": { "type": "string", "maxLength": 100 },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][0-9A-Za-z.-]+)?$" },
+    "baseTransport": { "type": "string", "minLength": 1 },
+    "repository": { "type": "string", "pattern": "^https://github\\.com/" },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "modelRegex": { "type": "string" },
+        "hostnameRegex": { "type": "string" },
+        "serviceTypes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "ports": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 65535 }, "uniqueItems": true }
+      },
+      "minProperties": 1
+    },
+    "permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["statusRead", "fileListRead", "fileUpload", "printStart", "printControl", "deviceControl", "cameraRead", "gcodeTransform"]
+      }
+    },
+    "operations": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/operation" },
+      "propertyNames": {
+        "enum": ["status", "listFiles", "uploadFile", "startPrint", "pause", "resume", "cancel", "setNozzleTemperature", "setBedTemperature", "setFan", "setLight", "setSpeed", "move", "home", "autoLevel", "flowCalibration", "timelapse"]
+      }
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["controls", "printOptions"],
+      "properties": {
+        "controls": { "type": "array", "items": { "$ref": "#/$defs/control" } },
+        "printOptions": { "type": "array", "items": { "$ref": "#/$defs/printOption" } }
+      }
+    }
+  },
+  "$defs": {
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["delegate", "http", "websocket", "gcode"] },
+        "action": { "type": "string" },
+        "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+        "path": { "type": "string", "pattern": "^/" },
+        "command": { "type": "string" },
+        "request": { "type": "object" },
+        "response": { "type": "object" }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "operation", "label"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$" },
+        "type": { "enum": ["status", "job", "temperature", "fanList", "slider", "toggle", "button", "motion", "camera", "fileBrowser", "filamentList", "excludeObjects", "printHistory", "timelapseList"] },
+        "operation": { "type": "string" },
+        "label": { "type": "string", "minLength": 1 },
+        "valuePath": { "type": "string" },
+        "unit": { "type": "string", "maxLength": 20 },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "step": { "type": "number", "exclusiveMinimum": 0 },
+        "visibleWhen": { "type": "string", "maxLength": 120 },
+        "confirm": { "type": "boolean", "default": false }
+      }
+    },
+    "printOption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "operation"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$" },
+        "label": { "type": "string", "minLength": 1 },
+        "operation": { "type": "string" },
+        "default": { "type": "boolean", "default": false }
+      }
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-25T18:13:43.715Z",
+  "engine": {
+    "name": "OrcaSlicer",
+    "version": "2.4.2",
+    "revision": "8500fcdccaa10b5099ac20d252af3a7c560046f1",
+    "source": "https://github.com/OrcaSlicer/OrcaSlicer"
+  },
+  "profileSources": [
+    {
+      "name": "OrcaSlicer",
+      "version": "2.4.2",
+      "revision": "8500fcdccaa10b5099ac20d252af3a7c560046f1",
+      "role": "base profiles, including engine-compatible Bambu profiles"
+    },
+    {
+      "name": "Creality Print",
+      "version": "7.2.1",
+      "revision": "24b9395c131a9849724c5bf098cba140a207e877",
+      "role": "compatible Creality machine dependency closures overlay",
+      "importedMachines": [
+        "Creality CR-10",
+        "Creality CR-10 SE",
+        "Creality CR-10 Smart",
+        "Creality CR-10 Smart Pro",
+        "Creality CR-10S Pro V2",
+        "Creality CR-20 Pro",
+        "Creality CR-30",
+        "Creality CR-6 SE",
+        "Creality CR-M4",
+        "Creality CR-M4 SE",
+        "Creality Ender-2 Pro",
+        "Creality Ender-3",
+        "Creality Ender-3 Max",
+        "Creality Ender-3 Max Neo",
+        "Creality Ender-3 Neo",
+        "Creality Ender-3 S1",
+        "Creality Ender-3 S1 Plus",
+        "Creality Ender-3 S1 Pro",
+        "Creality Ender-3 V2",
+        "Creality Ender-3 V3",
+        "Creality Ender-3 V3 KE",
+        "Creality Ender-3 V3 Mega",
+        "Creality Ender-3 V3 Plus",
+        "Creality Ender-3 V3 SE",
+        "Creality Ender-3 V4",
+        "Creality Ender-5 Max",
+        "Creality Ender-5 Plus",
+        "Creality Ender-5 S1",
+        "Creality GS-01",
+        "Creality GS-02",
+        "Creality GS-03",
+        "Creality GS-04",
+        "Creality Hi",
+        "Creality K1",
+        "Creality K1 Max",
+        "Creality K1 Max 2025_CFS-C",
+        "Creality K1 Max_CFS-C",
+        "Creality K1 SE",
+        "Creality K1 SE_CFS-C",
+        "Creality K1C",
+        "Creality K1C 2025_CFS-C",
+        "Creality K1C_CFS-C",
+        "Creality K1_CFS-C",
+        "Creality K2",
+        "Creality K2 Plus",
+        "Creality K2 Pro",
+        "Creality K2 SE",
+        "Creality Sermoon D3",
+        "Creality Sermoon D3 Pro",
+        "Creality Sermoon M300",
+        "Creality Sermoon V1 Pro",
+        "Creality Sonic_Ender-3 S1",
+        "Creality Sonic_Ender-5 S1",
+        "Creality Z2",
+        "SPARKX i7"
+      ],
+      "deferredMachines": []
+    },
+    {
+      "name": "Snapmaker Orca",
+      "version": "2.3.5",
+      "revision": "761718a5eaf6f52b818af236653f3807d091a613",
+      "role": "official Snapmaker machine, process, and filament profiles"
+    },
+    {
+      "name": "MakerSpell",
+      "role": "mobile integration metadata overlays",
+      "files": [
+        "Creality/machineList.json",
+        "Snapmaker/filament/filament_compatibility.json"
+      ]
+    }
+  ],
+  "researchedOfficialForks": [
+    {
+      "name": "Bambu Studio",
+      "version": "02.08.02.60",
+      "decision": "pre_start_fan_time and ramming fields are supported by the MakerSpell engine; engine-compatible BBL profiles are inherited from the Orca base"
+    },
+    {
+      "name": "QIDI Studio",
+      "version": "2.07.02.60",
+      "decision": "Q2/X4 ramming fields are supported by the MakerSpell engine; exact profile inheritance is retained from the consolidated Orca base"
+    },
+    {
+      "name": "ElegooSlicer",
+      "version": "1.5.3.4",
+      "decision": "G-code-affecting OEM files are hash-audited; no safe profile-backed engine delta is enabled in this bundle"
+    },
+    {
+      "name": "Orca-Flashforge",
+      "version": "1.7.9",
+      "decision": "profile G-code contracts are hash-audited; no unsupported GUI, cloud, or device-control code is imported"
+    },
+    {
+      "name": "Snapmaker Orca",
+      "version": "2.3.5",
+      "decision": "official Snapmaker profile snapshot is overlaid and its Generic U1 presets are required by the bundle gate"
+    },
+    {
+      "name": "Anycubic",
+      "decision": "no verified official open-source Orca fork; upstream Orca profiles used"
+    },
+    {
+      "name": "Sovol",
+      "decision": "no verified official open-source Orca fork; upstream Orca profiles used"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "../profile.schema.json",
+  "schemaVersion": 1,
+  "id": "community.example-klipper",
+  "name": "Community Example Klipper",
+  "version": "1.0.0",
+  "baseTransport": "moonraker",
+  "repository": "https://github.com/example/makerspell-printer-profiles",
+  "match": {
+    "modelRegex": "^Community Example Printer$",
+    "serviceTypes": ["_moonraker._tcp.local"],
+    "ports": [7125]
+  },
+  "permissions": [
+    "statusRead",
+    "fileListRead",
+    "fileUpload",
+    "printStart",
+    "printControl",
+    "deviceControl",
+    "gcodeTransform"
+  ],
+  "operations": {
+    "status": { "kind": "delegate", "action": "fetchStatus" },
+    "listFiles": { "kind": "delegate", "action": "listFiles" },
+    "uploadFile": { "kind": "delegate", "action": "uploadFile" },
+    "startPrint": { "kind": "delegate", "action": "startPrint" },
+    "pause": { "kind": "delegate", "action": "pause" },
+    "resume": { "kind": "delegate", "action": "resume" },
+    "cancel": { "kind": "delegate", "action": "cancel" },
+    "setFan": { "kind": "delegate", "action": "setFan" },
+    "autoLevel": { "kind": "gcode", "command": "BED_MESH_CALIBRATE" }
+  },
+  "ui": {
+    "controls": [
+      { "id": "status", "type": "status", "operation": "status", "label": "Printer status" },
+      { "id": "fans", "type": "fanList", "operation": "setFan", "label": "Fans", "valuePath": "fans" },
+      { "id": "files", "type": "fileBrowser", "operation": "listFiles", "label": "Files" }
+    ],
+    "printOptions": [
+      { "id": "autoLevel", "label": "Automatic bed leveling", "operation": "autoLevel", "default": false }
+    ]
+  }
+}

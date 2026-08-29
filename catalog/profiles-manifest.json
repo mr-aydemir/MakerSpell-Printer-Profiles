@@ -1,0 +1,13 @@
+{
+  "version": "1.4.6",
+  "downloadUrl": "https://github.com/mr-aydemir/MakerSync-Printer-Profiles/releases/download/profiles-v1.4.6/profiles.zip",
+  "sha256": "cc7d78ef36713dc14c95510fb2493d18a8669bb6615e152480f3ae45be1d82fb",
+  "size": 26719840,
+  "capabilities": {
+    "version": "1.6.0",
+    "archivePath": "profiles/metadata/profiles-capabilities.json",
+    "sha256": "50eb20030899047247154d09a46e408282a369528509e5a89e360a020f2865ac",
+    "size": 8928
+  },
+  "releasedAt": "2026-08-25T18:18:50.944Z"
+}

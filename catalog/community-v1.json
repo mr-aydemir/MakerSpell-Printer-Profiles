@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "url": "../community/profiles/example-klipper.json",
+      "sha256": "12bbd64787d86c6113640e6a17096656782ee1ecb84b67914a9cc97c9a67061c"
+    }
+  ]
+}

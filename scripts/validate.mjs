@@ -32,6 +32,21 @@ for (const file of walk('community/profiles')) {
     );
   }
 }
+const catalogSchema = JSON.parse(
+  fs.readFileSync('community/schema/catalog.schema.json', 'utf8'),
+);
+const validateCatalog = ajv.compile(catalogSchema);
+const catalog = JSON.parse(
+  fs.readFileSync('catalog/community-v1.json', 'utf8'),
+);
+if (!validateCatalog(catalog)) {
+  throw new Error(
+    `catalog/community-v1.json failed schema validation:\n${ajv.errorsText(
+      validateCatalog.errors,
+      { separator: '\n' },
+    )}`,
+  );
+}
 console.log(`Validated ${files} JSON files.`);
 
 function* walk(directory) {

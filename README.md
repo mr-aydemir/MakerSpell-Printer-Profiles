@@ -6,7 +6,7 @@ Community-maintained printer, process, filament, and MakerSpell control profiles
 
 - `profiles/`: Orca-compatible printer, process, and filament profiles.
 - `community/`: MakerSpell declarative printer-control profiles and JSON schemas.
-- `built-in/`: generated reference of adapters and UI capabilities compiled into MakerSpell.
+- `built-in/`: generated adapters and UI capability overlay for code compiled into MakerSpell.
 - `schema/`: schema for generated built-in adapter snapshots.
 - `metadata/profiles-sources.json`: pinned upstream provenance.
 - `catalog/profiles-manifest.json`: integrity metadata for the latest release.
@@ -23,9 +23,11 @@ sections, device controls, and print options used by the current application.
 It is generated from MakerSpell's real `PrinterTransportRegistry` so contributors
 can review shipped behavior before opening an issue or pull request.
 
-The built-in snapshot is reference data and cannot execute remote code. A
-proposed change becomes active only after it is expressed as a validated
-community profile and admitted to the pinned community catalog.
+MakerSpell loads this registry through `catalog/runtime-v1.json` at an immutable
+Git commit and verifies its SHA-256 digest. The runtime overlay may select a
+compiled adapter or hide/restrict capabilities, controls, UI sections, and print
+options. It cannot add protocol code, commands, hosts, or capabilities that are
+not already implemented and verified in the installed application.
 
 ## Contributing
 

@@ -1,0 +1,8 @@
+{
+  "$schema": "../schema/runtime-catalog.schema.json",
+  "schemaVersion": 1,
+  "registry": {
+    "url": "../built-in/registry-v1.json",
+    "sha256": "19ae3982a20c99c1195ddcb013c0591263dfe7bb0ca3073f361347760341186a"
+  }
+}

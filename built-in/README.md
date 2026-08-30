@@ -1,6 +1,6 @@
 # Built-in adapter reference
 
-`registry-v1.json` is a generated, review-only snapshot of every printer
+`registry-v1.json` is a generated, data-only runtime overlay for every printer
 transport registered by the current MakerSpell application.
 
 It records:
@@ -12,6 +12,8 @@ It records:
 - UI sections, job controls, device controls, and print preparation options;
 - the application source file that implements each adapter.
 
-Do not edit the generated snapshot without also proposing the corresponding
-application or exporter change. Community overrides belong in
-`community/profiles/` and enter production only through the pinned catalog.
+MakerSpell verifies it through the SHA-256 digest in
+`catalog/runtime-v1.json`. It may select and restrict compiled behavior, but it
+cannot introduce executable code or widen the installed adapter's abilities.
+Do not edit the generated registry without updating its catalog digest and
+proposing any matching application/exporter changes.

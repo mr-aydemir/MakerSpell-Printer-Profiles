@@ -8,7 +8,7 @@
     "registrySource": "makersync_app/lib/services/printer_transport_registry.dart",
     "generatedBy": "makersync_app/tool/export_builtin_printer_references.dart"
   },
-  "notice": "This is a review snapshot of compiled-in adapters. Community JSON profiles are activated only after schema validation and catalog approval; this file does not execute remote code.",
+  "notice": "This data-only runtime overlay may select or restrict adapters that are compiled into MakerSpell. It cannot add executable protocol code, commands, hosts, or capabilities that the installed app does not already implement.",
   "adapters": [
     {
       "order": 0,

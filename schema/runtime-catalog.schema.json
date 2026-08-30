@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mr-aydemir/MakerSpell-Printer-Profiles/schema/runtime-catalog.schema.json",
+  "title": "MakerSpell runtime overlay catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "registry"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "sha256"],
+      "properties": {
+        "url": { "const": "../built-in/registry-v1.json" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    }
+  }
+}

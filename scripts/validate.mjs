@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import crypto from 'node:crypto';
 
 const roots = [
   'profiles',
@@ -67,6 +68,29 @@ if (!validateBuiltIn(builtIn)) {
       { separator: '\n' },
     )}`,
   );
+}
+const runtimeCatalogSchema = JSON.parse(
+  fs.readFileSync('schema/runtime-catalog.schema.json', 'utf8'),
+);
+const validateRuntimeCatalog = ajv.compile(runtimeCatalogSchema);
+const runtimeCatalog = JSON.parse(
+  fs.readFileSync('catalog/runtime-v1.json', 'utf8'),
+);
+if (!validateRuntimeCatalog(runtimeCatalog)) {
+  throw new Error(
+    `catalog/runtime-v1.json failed schema validation:\n${ajv.errorsText(
+      validateRuntimeCatalog.errors,
+      { separator: '\n' },
+    )}`,
+  );
+}
+const runtimeRegistryBody = fs.readFileSync('built-in/registry-v1.json');
+const runtimeRegistryDigest = crypto
+  .createHash('sha256')
+  .update(runtimeRegistryBody)
+  .digest('hex');
+if (runtimeRegistryDigest !== runtimeCatalog.registry.sha256) {
+  throw new Error('catalog/runtime-v1.json registry digest is stale.');
 }
 console.log(`Validated ${files} JSON files.`);
 

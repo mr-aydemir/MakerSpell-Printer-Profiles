@@ -1,5 +1,8 @@
 # Contributing printer support
 
+If this is your first contribution, read the
+[step-by-step profile documentation](docs/README.md) before editing JSON.
+
 1. Fork this repository and create a focused branch.
 2. Change only the affected vendor/profile files.
 3. For a MakerSpell control profile, update or add a file below

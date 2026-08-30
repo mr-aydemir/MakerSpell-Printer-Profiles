@@ -31,7 +31,12 @@ not already implemented and verified in the installed application.
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md). Pull requests must keep JSON valid and
+New to the profile system? Start with the
+**[Printer profile documentation](docs/README.md)**. It explains the architecture,
+permissions, operations, interface controls, print options, testing, and the
+contribution workflow page by page.
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Pull requests must keep JSON valid and
 must not contain credentials, access tokens, absolute third-party operation
 URLs, or executable scripts.
 

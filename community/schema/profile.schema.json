@@ -65,9 +65,32 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "type": { "enum": ["none", "bearer", "apiKeyHeader", "basic"] },
+            "type": { "enum": ["none", "bearer", "apiKeyHeader", "basic", "usernamePassword"] },
             "header": { "type": "string" },
-            "prefix": { "type": "string" }
+            "prefix": { "type": "string" },
+            "username": { "type": "string" }
+          }
+        },
+        "mqtt": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "scheme": { "enum": ["mqtt", "mqtts"] },
+            "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+            "clientId": { "type": "string", "minLength": 1 },
+            "keepAliveSeconds": { "type": "integer", "minimum": 5, "maximum": 300 },
+            "authentication": { "$ref": "#/$defs/authentication" }
+          }
+        },
+        "ftp": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "scheme": { "enum": ["ftp", "ftps"] },
+            "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+            "tlsMode": { "enum": ["implicit", "explicit"] },
+            "rootPath": { "type": "string", "pattern": "^/" },
+            "authentication": { "$ref": "#/$defs/authentication" }
           }
         },
         "gcode": {
@@ -88,13 +111,26 @@
       "additionalProperties": false,
       "required": ["kind"],
       "properties": {
-        "kind": { "enum": ["delegate", "http", "websocket", "gcode"] },
+        "kind": { "enum": ["delegate", "http", "websocket", "mqtt", "ftp", "gcode"] },
         "action": { "type": "string" },
         "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
         "path": { "type": "string", "pattern": "^/" },
         "command": { "type": "string" },
+        "topic": { "type": "string", "minLength": 1 },
+        "responseTopic": { "type": "string" },
+        "qos": { "type": "integer", "minimum": 0, "maximum": 2 },
         "request": { "type": "object" },
         "response": { "type": "object" }
+      }
+    },
+    "authentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["none", "bearer", "apiKeyHeader", "basic", "usernamePassword"] },
+        "header": { "type": "string" },
+        "prefix": { "type": "string" },
+        "username": { "type": "string" }
       }
     },
     "control": {

@@ -1,10 +1,15 @@
 # 9. Building a declarative printer driver
 
-Use a declarative driver when the printer exposes ordinary local HTTP,
-WebSocket, or G-code-over-HTTP/WebSocket APIs. No MakerSpell application change
-is required.
+Use a declarative driver when the printer exposes local HTTP/HTTPS, WebSocket,
+MQTT/MQTTS, FTP/FTPS, or G-code-over-HTTP/WebSocket APIs. A profile can combine
+these channels; for example, HTTP for status, MQTT for controls, and FTPS for
+file transfer. No printer-specific MakerSpell application change is required.
 
-## 1. Connection
+## 1. Connection channels
+
+`connection` is the only place where network channels are configured. The
+top-level HTTP settings are also the origin for WebSocket operations: `http`
+becomes `ws`, and `https` becomes `wss`.
 
 ```json
 "baseTransport": "declarative",
@@ -21,9 +26,95 @@ is required.
 }
 ```
 
-Authentication types are `none`, `bearer`, `apiKeyHeader`, and `basic`. The
+Authentication types are `none`, `bearer`, `apiKeyHeader`, `basic`, and
+`usernamePassword`. The
 credential is read from Android Keystore/iOS Keychain. Never put a token,
 password, cookie, or API key in the profile.
+
+### MQTT / MQTTS
+
+```json
+"connection": {
+  "scheme": "https",
+  "mqtt": {
+    "scheme": "mqtts",
+    "port": 8883,
+    "clientId": "makerspell_{{timestamp}}",
+    "keepAliveSeconds": 15,
+    "authentication": {
+      "type": "usernamePassword",
+      "username": "printer"
+    }
+  }
+}
+```
+
+An MQTT operation declares the publish topic, optional response topic and QoS.
+The request `payload` is JSON-templated before publishing. When no response
+topic is present, publishing successfully completes the operation.
+
+```json
+"setFan": {
+  "kind": "mqtt",
+  "topic": "printer/control/fan",
+  "responseTopic": "printer/reply/fan",
+  "qos": 1,
+  "request": { "payload": { "fan": "{{fanId}}", "percent": "{{value}}" } },
+  "response": { "successPath": "$.ok", "successValues": [true] }
+}
+```
+
+### FTP / FTPS
+
+```json
+"connection": {
+  "scheme": "http",
+  "ftp": {
+    "scheme": "ftps",
+    "port": 990,
+    "tlsMode": "implicit",
+    "rootPath": "/gcodes",
+    "authentication": {
+      "type": "usernamePassword",
+      "username": "printer"
+    }
+  }
+}
+```
+
+FTP operations use one of `list`, `upload`, or `delete`. Paths are absolute on
+the printer and may use safe runtime templates.
+
+```json
+"listFiles": { "kind": "ftp", "action": "list", "path": "/gcodes" },
+"uploadFile": {
+  "kind": "ftp",
+  "action": "upload",
+  "path": "/gcodes/{{filename}}"
+},
+"deleteFile": {
+  "kind": "ftp",
+  "action": "delete",
+  "path": "{{remotePath}}"
+}
+```
+
+FTPS uses platform certificate validation. Community profiles cannot disable
+TLS verification or embed credentials.
+
+### WebSocket
+
+WebSocket does not need a second connection block. It uses the HTTP host, port,
+base path, authentication, and timeout declared above.
+
+```json
+"status": {
+  "kind": "websocket",
+  "path": "/websocket",
+  "command": "{\"method\":\"status\"}",
+  "response": { "fields": { "printerState": "$.result.state" } }
+}
+```
 
 ## 2. Status mapping
 
@@ -151,8 +242,9 @@ selected printer address. Supported kinds are `snapshot`, `mjpeg`, `webPage`,
 
 ## 7. Form, JSON and Preview
 
-The Form tab edits discovery, connection/authentication, permissions,
-operations and interface controls. Each control selects an operation; therefore
+The Form tab exposes HTTP/WebSocket, MQTT/MQTTS and FTP/FTPS as separate
+connection cards. The operation editor then selects which channel an operation
+uses. It also edits discovery, permissions and interface controls. Each control selects an operation; therefore
 the same Flutter component library can safely render different vendor APIs.
 Use the JSON tab for advanced response mappings or G-code channel definitions,
 and Preview to verify layout before installation.

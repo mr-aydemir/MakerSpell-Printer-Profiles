@@ -14,6 +14,7 @@
     "author": { "type": "string", "maxLength": 100 },
     "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][0-9A-Za-z.-]+)?$" },
     "baseTransport": { "type": "string", "minLength": 1 },
+    "connection": { "$ref": "#/$defs/connection" },
     "repository": { "type": "string", "pattern": "^https://github\\.com/" },
     "match": {
       "type": "object",
@@ -37,7 +38,7 @@
       "type": "object",
       "additionalProperties": { "$ref": "#/$defs/operation" },
       "propertyNames": {
-        "enum": ["status", "listFiles", "uploadFile", "startPrint", "pause", "resume", "cancel", "setNozzleTemperature", "setBedTemperature", "setFan", "setLight", "setSpeed", "move", "home", "autoLevel", "flowCalibration", "timelapse"]
+        "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$"
       }
     },
     "ui": {
@@ -51,6 +52,37 @@
     }
   },
   "$defs": {
+    "connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scheme": { "enum": ["http", "https"], "default": "http" },
+        "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "basePath": { "type": "string", "pattern": "^(/.*)?$" },
+        "timeoutMs": { "type": "integer", "minimum": 500, "maximum": 60000 },
+        "headers": { "type": "object", "additionalProperties": { "type": "string" } },
+        "authentication": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": { "enum": ["none", "bearer", "apiKeyHeader", "basic"] },
+            "header": { "type": "string" },
+            "prefix": { "type": "string" }
+          }
+        },
+        "gcode": {
+          "type": "object",
+          "required": ["kind", "path"],
+          "properties": {
+            "kind": { "enum": ["http", "websocket"] },
+            "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+            "path": { "type": "string", "pattern": "^/" },
+            "command": { "type": "string" },
+            "request": { "type": "object" }
+          }
+        }
+      }
+    },
     "operation": {
       "type": "object",
       "additionalProperties": false,

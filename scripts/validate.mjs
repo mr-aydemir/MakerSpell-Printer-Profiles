@@ -84,7 +84,13 @@ if (!validateRuntimeCatalog(runtimeCatalog)) {
     )}`,
   );
 }
-const runtimeRegistryBody = fs.readFileSync('built-in/registry-v1.json');
+// Git may check text files out with CRLF on Windows. The catalog signs the
+// canonical repository representation, so line-ending conversion must not
+// make a valid registry appear tampered with.
+const runtimeRegistryBody = Buffer.from(
+  fs.readFileSync('built-in/registry-v1.json', 'utf8').replace(/\r\n/g, '\n'),
+  'utf8',
+);
 const runtimeRegistryDigest = crypto
   .createHash('sha256')
   .update(runtimeRegistryBody)

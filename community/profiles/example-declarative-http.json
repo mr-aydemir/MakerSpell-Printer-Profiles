@@ -1,0 +1,148 @@
+{
+  "$schema": "../schema/profile.schema.json",
+  "schemaVersion": 1,
+  "id": "community.example-declarative-http",
+  "name": "Example Declarative HTTP Printer",
+  "version": "1.0.0",
+  "baseTransport": "declarative",
+  "repository": "https://github.com/mr-aydemir/MakerSpell-Printer-Profiles",
+  "connection": {
+    "scheme": "http",
+    "port": 8080,
+    "basePath": "",
+    "timeoutMs": 8000,
+    "authentication": { "type": "none" },
+    "gcode": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/gcode",
+      "request": { "body": { "script": "{{command}}" } }
+    }
+  },
+  "match": {
+    "modelRegex": "^Example Printer$",
+    "serviceTypes": ["_example-printer._tcp.local"],
+    "ports": [8080]
+  },
+  "permissions": [
+    "statusRead",
+    "fileListRead",
+    "fileUpload",
+    "printStart",
+    "printControl",
+    "deviceControl",
+    "cameraRead",
+    "gcodeTransform"
+  ],
+  "operations": {
+    "status": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/status",
+      "response": {
+        "fields": {
+          "printerState": "$.state",
+          "progress": "$.progress",
+          "filename": "$.job.filename",
+          "nozzleTemperature": "$.temperatures.nozzle.actual",
+          "nozzleTarget": "$.temperatures.nozzle.target",
+          "bedTemperature": "$.temperatures.bed.actual",
+          "bedTarget": "$.temperatures.bed.target",
+          "elapsedSeconds": "$.job.elapsedSeconds",
+          "remainingSeconds": "$.job.remainingSeconds"
+        },
+        "fanItemsPath": "$.fans",
+        "fanItemFields": {
+          "id": "$.id",
+          "label": "$.name",
+          "percent": "$.percent",
+          "role": "$.role",
+          "controllable": "$.controllable"
+        }
+      }
+    },
+    "listFiles": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/files",
+      "response": {
+        "itemsPath": "$.files",
+        "itemFields": {
+          "name": "$.name",
+          "path": "$.path",
+          "sizeBytes": "$.size"
+        }
+      }
+    },
+    "uploadFile": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/files",
+      "request": { "encoding": "multipart", "fileField": "file" },
+      "response": { "successPath": "$.ok", "successValues": [true] }
+    },
+    "startPrint": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/print",
+      "request": { "body": { "filename": "{{filename}}" } },
+      "response": { "successPath": "$.ok", "successValues": [true] }
+    },
+    "pause": { "kind": "http", "method": "POST", "path": "/api/job/pause" },
+    "resume": { "kind": "http", "method": "POST", "path": "/api/job/resume" },
+    "cancel": { "kind": "http", "method": "POST", "path": "/api/job/cancel" },
+    "setBedTemperature": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/temperature",
+      "request": { "body": { "bed": "{{value}}" } }
+    },
+    "setFan": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/api/fans/{{fanId}}",
+      "request": { "body": { "percent": "{{value}}" } }
+    },
+    "camera": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/camera",
+      "response": {
+        "fields": {
+          "path": "$.streamPath",
+          "kind": "$.kind",
+          "refreshIntervalMs": "$.refreshIntervalMs"
+        }
+      }
+    },
+    "listFilaments": {
+      "kind": "http",
+      "method": "GET",
+      "path": "/api/filaments",
+      "response": {
+        "itemsPath": "$.slots",
+        "itemFields": {
+          "index": "$.index",
+          "hasFilament": "$.loaded",
+          "colorHex": "$.color",
+          "materialType": "$.material",
+          "vendor": "$.vendor",
+          "slotLabel": "$.label"
+        }
+      }
+    },
+    "autoLevel": { "kind": "gcode", "command": "G29" }
+  },
+  "ui": {
+    "controls": [
+      { "id": "status", "type": "status", "operation": "status", "label": "Printer status" },
+      { "id": "camera", "type": "camera", "operation": "camera", "label": "Camera" },
+      { "id": "fans", "type": "fanList", "operation": "setFan", "label": "Fans", "valuePath": "fans" },
+      { "id": "files", "type": "fileBrowser", "operation": "listFiles", "label": "Files" },
+      { "id": "filaments", "type": "filamentList", "operation": "listFilaments", "label": "Filaments" }
+    ],
+    "printOptions": [
+      { "id": "autoLevel", "label": "Automatic bed leveling", "operation": "autoLevel", "default": false }
+    ]
+  }
+}

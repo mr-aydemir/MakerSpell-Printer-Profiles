@@ -5,6 +5,18 @@
   "name": "Community Example Klipper",
   "version": "1.0.0",
   "baseTransport": "moonraker",
+  "connection": {
+    "scheme": "http",
+    "port": 7125,
+    "timeoutMs": 8000,
+    "authentication": { "type": "none" },
+    "gcode": {
+      "kind": "http",
+      "method": "POST",
+      "path": "/printer/gcode/script",
+      "request": { "body": { "script": "{{command}}" } }
+    }
+  },
   "repository": "https://github.com/example/makerspell-printer-profiles",
   "match": {
     "modelRegex": "^Community Example Printer$",

@@ -1,10 +1,10 @@
 # 4. Operations and delegation
 
-Operations connect a declarative profile to reviewed behavior.
+Operations connect UI capabilities to printer-local protocol requests.
 
 ## Delegated operation
 
-The normal production form is `delegate`:
+`delegate` keeps using a reviewed compiled adapter:
 
 ```json
 "operations": {
@@ -17,7 +17,7 @@ The normal production form is `delegate`:
 The action is executed by the selected compiled transport. The profile chooses
 from an allow-list; it cannot name an arbitrary Dart method or network target.
 
-## Supported operation IDs
+## Operation IDs
 
 | Group | IDs |
 | --- | --- |
@@ -26,7 +26,9 @@ from an allow-list; it cannot name an arbitrary Dart method or network target.
 | Device control | `setNozzleTemperature`, `setBedTemperature`, `setFan`, `setLight`, `setSpeed`, `move`, `home` |
 | Print preparation | `autoLevel`, `flowCalibration`, `timelapse` |
 
-Operation IDs have permission requirements. See
+Standard IDs connect to MakerSpell's built-in status, file and control UI.
+Profiles may also define namespaced/custom IDs for custom buttons. Operation
+IDs have permission requirements. See
 [Permissions and security](03-permissions-and-security.md).
 
 ## Upload and print-start operations
@@ -43,18 +45,40 @@ If an installed matching community profile omits these declarations, MakerSpell
 intentionally blocks the corresponding operation instead of bypassing the
 profile's permission boundary.
 
-## Reserved operation kinds
+## Direct HTTP operation
 
-The schema also recognizes `http`, `websocket`, and `gcode`. They are parsed and
-validated for forward compatibility, but direct execution is disabled unless a
-reviewed runtime adapter provides the behavior. Do not assume that a raw request
-or command in JSON will run on a user's printer.
+```json
+"status": {
+  "kind": "http",
+  "method": "GET",
+  "path": "/api/status",
+  "response": {
+    "fields": {
+      "printerState": "$.result.state",
+      "progress": "$.result.progress",
+      "bedTemperature": "$.result.bed.actual"
+    }
+  }
+}
+```
+
+Paths must be printer-relative. MakerSpell combines them with the selected
+printer's IP and the profile's `connection` block.
+
+## WebSocket and G-code
+
+`websocket` sends a command template and consumes one bounded response. `gcode`
+uses the reviewed HTTP or WebSocket channel declared in `connection.gcode`.
+
+See [Building a declarative driver](09-declarative-driver.md) for request bodies,
+multipart upload, authentication, response mapping, and testing.
 
 ## Common mistakes
 
 - UI control references an operation that does not exist.
 - Operation exists but its required permission is absent.
-- Delegate action is misspelled or unsupported by the base transport.
+- URL is absolute instead of printer-relative.
+- A credential is embedded in headers instead of using secure authentication.
 - Profile declares upload/start even though the compiled adapter lacks the
   corresponding capability.
 

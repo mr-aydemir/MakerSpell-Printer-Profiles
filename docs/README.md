@@ -13,16 +13,18 @@ Read it in order the first time; each page builds on the previous one.
 6. [Print options](06-print-options.md)
 7. [Testing and contributing](07-testing-and-contributing.md)
 8. [Troubleshooting](08-troubleshooting.md)
+9. [Building a declarative driver](09-declarative-driver.md)
 
 ## The shortest possible explanation
 
 A community profile does three things:
 
 1. identifies a printer;
-2. selects a reviewed transport already built into MakerSpell;
-3. describes which reviewed operations and UI components are exposed.
+2. describes a sandboxed printer-local protocol or selects a compiled fallback;
+3. maps operations, status fields, permissions, and UI components.
 
-It does **not** install executable code or implement a new network protocol.
+It does **not** install executable code. Ordinary HTTP, WebSocket, and G-code
+protocols run through MakerSpell's reviewed declarative runtime.
 
 Use [`built-in/registry-v1.json`](../built-in/registry-v1.json) to see what the
 installed application already supports. Use a file under `community/profiles/`
@@ -39,7 +41,8 @@ to propose a safe, declarative override for a printer or firmware variant.
 
 The MakerSpell editor has three views:
 
-- **Form:** edit permissions and interface controls without writing JSON.
+- **Form:** edit connection, authentication, operations, permissions, and
+  interface controls without writing the complete JSON by hand.
 - **JSON:** inspect or edit the complete manifest.
 - **Preview:** check the responsive layout without sending commands.
 

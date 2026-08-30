@@ -93,6 +93,18 @@
             "authentication": { "$ref": "#/$defs/authentication" }
           }
         },
+        "tcp": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["port"],
+          "properties": {
+            "scheme": { "enum": ["tcp", "tcps"] },
+            "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+            "lineEnding": { "enum": ["none", "lf", "crlf"] },
+            "responseMode": { "enum": ["none", "line", "close"] },
+            "maxResponseBytes": { "type": "integer", "minimum": 1, "maximum": 8388608 }
+          }
+        },
         "gcode": {
           "type": "object",
           "required": ["kind", "path"],
@@ -111,7 +123,7 @@
       "additionalProperties": false,
       "required": ["kind"],
       "properties": {
-        "kind": { "enum": ["delegate", "http", "websocket", "mqtt", "ftp", "gcode"] },
+        "kind": { "enum": ["delegate", "http", "websocket", "mqtt", "ftp", "tcp", "gcode"] },
         "action": { "type": "string" },
         "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
         "path": { "type": "string", "pattern": "^/" },

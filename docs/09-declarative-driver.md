@@ -1,7 +1,7 @@
 # 9. Building a declarative printer driver
 
 Use a declarative driver when the printer exposes local HTTP/HTTPS, WebSocket,
-MQTT/MQTTS, FTP/FTPS, or G-code-over-HTTP/WebSocket APIs. A profile can combine
+MQTT/MQTTS, FTP/FTPS, TCP/TCPS console, or G-code-over-HTTP/WebSocket APIs. A profile can combine
 these channels; for example, HTTP for status, MQTT for controls, and FTPS for
 file transfer. No printer-specific MakerSpell application change is required.
 
@@ -101,6 +101,42 @@ the printer and may use safe runtime templates.
 
 FTPS uses platform certificate validation. Community profiles cannot disable
 TLS verification or embed credentials.
+
+### TCP / TCPS console
+
+Use this channel for printers that expose a line-oriented raw socket console.
+`tcps` enables TLS with platform certificate validation. It is not Telnet: the
+runtime does not negotiate Telnet options or execute an interactive shell.
+
+```json
+"connection": {
+  "scheme": "http",
+  "tcp": {
+    "scheme": "tcp",
+    "port": 8899,
+    "lineEnding": "crlf",
+    "responseMode": "line",
+    "maxResponseBytes": 1048576
+  }
+}
+```
+
+`lineEnding` is `none`, `lf`, or `crlf`. `responseMode` is `none` for
+fire-and-forget commands, `line` for the first LF-terminated reply, or `close`
+to read until the printer closes the connection.
+
+```json
+"consoleStatus": {
+  "kind": "tcp",
+  "command": "STATUS",
+  "response": {
+    "fields": { "printerState": "$.state" }
+  }
+}
+```
+
+Connections always target the selected printer IP and declared port. Response
+size and duration remain bounded by the profile limits.
 
 ### WebSocket
 
@@ -242,7 +278,7 @@ selected printer address. Supported kinds are `snapshot`, `mjpeg`, `webPage`,
 
 ## 7. Form, JSON and Preview
 
-The Form tab exposes HTTP/WebSocket, MQTT/MQTTS and FTP/FTPS as separate
+The Form tab exposes HTTP/WebSocket, MQTT/MQTTS, FTP/FTPS and TCP/TCPS as separate
 connection cards. The operation editor then selects which channel an operation
 uses. It also edits discovery, permissions and interface controls. Each control selects an operation; therefore
 the same Flutter component library can safely render different vendor APIs.

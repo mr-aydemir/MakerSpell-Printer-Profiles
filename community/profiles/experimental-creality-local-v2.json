@@ -232,6 +232,10 @@
     }
   },
   "media": {
+    "controlPanel": {
+      "channel": "web",
+      "path": "/"
+    },
     "camera": {
       "candidates": [
         {

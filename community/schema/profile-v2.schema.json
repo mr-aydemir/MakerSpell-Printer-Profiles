@@ -57,6 +57,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "controlPanel": { "$ref": "#/$defs/controlPanel" },
         "camera": { "$ref": "#/$defs/camera" }
       }
     },
@@ -90,6 +91,22 @@
     "verification": { "type": "object" }
   },
   "$defs": {
+    "controlPanel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["channel"],
+      "properties": {
+        "channel": { "type": "string" },
+        "path": { "type": "string", "pattern": "^/" },
+        "query": {
+          "type": "object",
+          "maxProperties": 16,
+          "additionalProperties": {
+            "oneOf": [{ "type": "string" }, { "type": "number" }, { "type": "boolean" }]
+          }
+        }
+      }
+    },
     "actionBinding": {
       "type": "object",
       "additionalProperties": false,

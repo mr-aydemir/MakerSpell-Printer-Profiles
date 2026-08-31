@@ -105,6 +105,14 @@ JSON and Preview tabs edit the same document. A local save keeps one previous
 validated revision so contributors can restore it without reinstalling the
 application.
 
+When the profile manager is opened from a printer, **Use as primary transport**
+runs the profile's required discovery probes against that exact LAN printer.
+The app persists `community-v2:<profile-id>` only after the probes match. An
+active experimental profile exposes **Restore**, which returns the printer to
+the compiled adapter named by `identity.replaces`. This explicit activation is
+the device-test path; catalog installation alone never silently replaces a
+production adapter.
+
 ## Cameras
 
 Camera candidates live in `media.camera.candidates` with an HTTP channel,

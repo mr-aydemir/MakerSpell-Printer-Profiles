@@ -9,7 +9,14 @@
     "status": "experimental",
     "replaces": "creality_local"
   },
-  "permissions": ["statusRead", "fileUpload", "printStart"],
+  "permissions": [
+    "statusRead",
+    "fileListRead",
+    "fileUpload",
+    "printStart",
+    "printControl",
+    "deviceControl"
+  ],
   "credentials": {},
   "discovery": {
     "serviceTypes": ["_creality._tcp.local", "_cxswbox._tcp.local"],
@@ -76,16 +83,73 @@
       "channel": "control",
       "send": {
         "json": {
-          "opGcodeFile": "printprt:/mnt/UDISK/printer_data/gcodes/{{filename}}",
+          "opGcodeFile": "printprt:{{remotePath}}",
           "enableSelfTest": 0
         }
       },
+      "receive": { "mode": "none" }
+    },
+    "listFiles": {
+      "channel": "control",
+      "send": {
+        "json": {
+          "method": "get",
+          "params": { "reqGcodeFile": 1, "reqGcodeList": 1 }
+        }
+      },
+      "receive": {
+        "mode": "matching",
+        "until": {
+          "pathExistsAny": ["$.retGcodeFileInfo2", "$.retGcodeFileInfo.fileInfo"]
+        },
+        "maxMessages": 20
+      },
+      "map": "files"
+    },
+    "pause": {
+      "channel": "control",
+      "send": { "json": { "pause": 1 } },
+      "receive": { "mode": "none" }
+    },
+    "resume": {
+      "channel": "control",
+      "send": { "json": { "pause": 0 } },
+      "receive": { "mode": "none" }
+    },
+    "cancel": {
+      "channel": "control",
+      "send": { "json": { "stop": 1 } },
+      "receive": { "mode": "none" }
+    },
+    "setNozzleTemperature": {
+      "channel": "control",
+      "send": { "json": { "nozzleTempControl": "{{value}}" } },
+      "receive": { "mode": "none" }
+    },
+    "setBedTemperature": {
+      "channel": "control",
+      "send": { "json": { "bedTempControl": { "num": 0, "val": "{{value}}" } } },
+      "receive": { "mode": "none" }
+    },
+    "setLightOn": {
+      "channel": "control",
+      "send": { "json": { "lightSw": 1 } },
+      "receive": { "mode": "none" }
+    },
+    "setLightOff": {
+      "channel": "control",
+      "send": { "json": { "lightSw": 0 } },
+      "receive": { "mode": "none" }
+    },
+    "setSpeed": {
+      "channel": "control",
+      "send": { "json": { "setFeedratePct": "{{value}}" } },
       "receive": { "mode": "none" }
     }
   },
   "workflows": {
     "uploadAndStart": {
-      "maxExecutedSteps": 20,
+      "maxExecutedSteps": 60,
       "steps": [
         { "type": "emit", "stage": "uploading", "progress": 0 },
         { "type": "operation", "operation": "uploadFile", "saveAs": "upload" },
@@ -94,16 +158,68 @@
           "type": "branch",
           "condition": { "variable": "startPrint", "equals": true },
           "then": [
-            { "type": "wait", "milliseconds": 750 },
             { "type": "emit", "stage": "startingPrint" },
+            {
+              "type": "retry",
+              "maxAttempts": 12,
+              "delayMilliseconds": 750,
+              "steps": [
+                { "type": "operation", "operation": "listFiles", "saveAs": "files" },
+                {
+                  "type": "set",
+                  "name": "remotePath",
+                  "select": {
+                    "sources": ["$.results.files.payload.retGcodeFileInfo2"],
+                    "where": {
+                      "path": "$.name",
+                      "equalsVariable": "filename",
+                      "caseInsensitive": true,
+                      "basename": true
+                    },
+                    "valuePath": "$.path"
+                  }
+                },
+                {
+                  "type": "assert",
+                  "condition": { "variable": "remotePath", "exists": true },
+                  "message": "The uploaded file has not been indexed yet."
+                }
+              ]
+            },
             { "type": "operation", "operation": "startPrint", "saveAs": "start" }
           ]
         }
       ]
     },
     "startPrint": {
-      "maxExecutedSteps": 5,
+      "maxExecutedSteps": 50,
       "steps": [
+        {
+          "type": "retry",
+          "maxAttempts": 12,
+          "delayMilliseconds": 750,
+          "steps": [
+            { "type": "operation", "operation": "listFiles", "saveAs": "files" },
+            {
+              "type": "set",
+              "name": "remotePath",
+              "select": {
+                "sources": ["$.results.files.payload.retGcodeFileInfo2"],
+                "where": {
+                  "path": "$.name",
+                  "equalsVariable": "filename",
+                  "caseInsensitive": true,
+                  "basename": true
+                },
+                "valuePath": "$.path"
+              }
+            },
+            {
+              "type": "assert",
+              "condition": { "variable": "remotePath", "exists": true }
+            }
+          ]
+        },
         { "type": "operation", "operation": "startPrint", "saveAs": "start" }
       ]
     }
@@ -121,7 +237,54 @@
       "printer.temperatures.nozzle.target": "$.targetNozzleTemp",
       "printer.temperatures.bed.actual": "$.bedTemp0",
       "printer.temperatures.bed.target": "$.targetBedTemp0",
-      "printer.motion.position": "$.curPosition"
+      "printer.motion.position": "$.curPosition",
+      "printer.fans": {
+        "compose": [
+          {
+            "$includeWhenAny": ["$.modelFanPct", "$.fan"],
+            "id": { "value": "model" },
+            "role": { "value": "partCooling" },
+            "percent": {
+              "paths": ["$.modelFanPct", "$.fan"],
+              "enum": { "true": 100, "false": 0 }
+            },
+            "controllable": { "value": true }
+          },
+          {
+            "$includeWhenAny": ["$.caseFanPct", "$.fanCase"],
+            "id": { "value": "case" },
+            "role": { "value": "rear" },
+            "percent": {
+              "paths": ["$.caseFanPct", "$.fanCase"],
+              "enum": { "true": 100, "false": 0 }
+            },
+            "controllable": { "value": true }
+          },
+          {
+            "$includeWhenAny": ["$.auxiliaryFanPct", "$.fanAuxiliary"],
+            "id": { "value": "auxiliary" },
+            "role": { "value": "auxiliary" },
+            "percent": {
+              "paths": ["$.auxiliaryFanPct", "$.fanAuxiliary"],
+              "enum": { "true": 100, "false": 0 }
+            },
+            "controllable": { "value": true }
+          }
+        ]
+      }
+    },
+    "files": {
+      "printer.files": {
+        "path": "$.retGcodeFileInfo2",
+        "default": [],
+        "items": {
+          "name": "$.name",
+          "path": "$.path",
+          "sizeBytes": "$.file_size",
+          "material": "$.material",
+          "layerHeightMm": "$.layerHeight"
+        }
+      }
     }
   },
   "ui": {
@@ -160,7 +323,19 @@
   "verification": {
     "level": "fixtureOnly",
     "testedOperations": ["probeInfo", "status"],
-    "untestedOperations": ["uploadFile", "startPrint"],
+    "untestedOperations": [
+      "uploadFile",
+      "listFiles",
+      "startPrint",
+      "pause",
+      "resume",
+      "cancel",
+      "setNozzleTemperature",
+      "setBedTemperature",
+      "setLightOn",
+      "setLightOff",
+      "setSpeed"
+    ],
     "testedWorkflows": []
   }
 }

@@ -277,6 +277,21 @@ start attempt and a successful bounded retry. The Creality workflow remains
 `fixtureOnly`: its mutating operations are intentionally marked untested until
 device conformance confirms indexing paths and firmware variants.
 
+The workflow layer also supports bounded list selection. Upload-and-start can
+poll a printer's file index, compare a filename case-insensitively by basename,
+capture the device-reported path and pass that path to the next operation. This
+removes guessed `/mnt/...` paths from the runtime. Creality's modern
+`retGcodeFileInfo2` response is described by the profile; its legacy delimited
+`fileInfo` response still requires a registered safe decoder before parity can
+be claimed.
+
+Normalized mappings now support coalesced paths, list item mapping and bounded
+composed lists. The experimental profile uses these primitives for local files
+and all printer-reported fan channels. The v2 transport exposes mapped files,
+pause/resume/cancel, nozzle and bed targets, light and speed through the common
+MakerSpell transport interfaces. Mutating controls remain explicitly untested
+in the profile verification record until guided device conformance passes.
+
 ### C — Full UI renderer
 
 - registered component for every existing control-screen section;

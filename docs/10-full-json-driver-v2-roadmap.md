@@ -255,6 +255,28 @@ until Phase D acceptance passes.
 
 Acceptance: mock Creality upload-and-start uses no compiled transport.
 
+#### Current Phase B implementation
+
+The app now executes bounded v2 workflow graphs and exposes them through a
+real `PrinterTransport` implementation:
+
+- `operation`, `branch`, `wait`, `retry`, `set`, `assert` and `emit` steps;
+- a global execution budget, nesting limit, cancellation checks and bounded
+  retry/wait values;
+- multipart binary upload with live transfer progress;
+- workflow stage events mapped to the standard upload/start UI;
+- permissions checked from the complete workflow graph;
+- explicit `community-v2:<profile-id>` activation while a profile remains
+  experimental, preventing an unverified profile from replacing a production
+  adapter;
+- an experimental Creality upload-and-start workflow using HTTP port 80 and
+  WebSocket port 9999 without calling the compiled Creality transport.
+
+Mock-server tests prove a real multipart upload followed by a failed first
+start attempt and a successful bounded retry. The Creality workflow remains
+`fixtureOnly`: its mutating operations are intentionally marked untested until
+device conformance confirms indexing paths and firmware variants.
+
 ### C — Full UI renderer
 
 - registered component for every existing control-screen section;

@@ -129,6 +129,21 @@
             },
             "round": { "type": "boolean" },
             "uppercase": { "type": "boolean" },
+            "required": { "type": "boolean" },
+            "allowed": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 64,
+              "uniqueItems": true,
+              "items": {
+                "oneOf": [
+                  { "type": "string" },
+                  { "type": "number" },
+                  { "type": "boolean" }
+                ]
+              }
+            },
+            "nonZero": { "type": "boolean" },
             "enum": { "type": "object" }
           },
           "anyOf": [

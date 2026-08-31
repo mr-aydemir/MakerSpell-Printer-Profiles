@@ -191,6 +191,7 @@
         "fanIndex": {
           "from": "fanId",
           "default": "model",
+          "allowed": ["part", "model", "P0", "rear", "case", "P1", "auxiliary", "side", "P2"],
           "enum": {
             "part": 0,
             "model": 0,
@@ -203,14 +204,14 @@
             "P2": 2
           }
         },
-        "pwm": { "from": "value", "scale": 2.55, "clamp": [0, 255], "round": true }
+        "pwm": { "from": "value", "required": true, "scale": 2.55, "clamp": [0, 255], "round": true }
       }
     },
     "move": {
       "operation": "move",
       "arguments": {
-        "axis": { "from": "axis", "uppercase": true },
-        "distance": { "from": "value", "clamp": [-100, 100] },
+        "axis": { "from": "axis", "required": true, "uppercase": true, "allowed": ["X", "Y", "Z"] },
+        "distance": { "from": "value", "required": true, "nonZero": true, "clamp": [-100, 100] },
         "feedRate": {
           "from": "axis",
           "uppercase": true,
@@ -220,7 +221,14 @@
     },
     "home": {
       "operation": "home",
-      "arguments": { "axes": { "from": "axes", "uppercase": true } }
+      "arguments": {
+        "axes": {
+          "from": "axes",
+          "required": true,
+          "uppercase": true,
+          "allowed": ["X", "Y", "Z", "X Y", "X Y Z"]
+        }
+      }
     }
   },
   "media": {

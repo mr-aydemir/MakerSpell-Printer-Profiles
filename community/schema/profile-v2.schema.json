@@ -13,9 +13,18 @@
     "identity": { "type": "object" },
     "permissions": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
     "credentials": { "type": "object" },
-    "discovery": { "type": "object" },
+    "discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "serviceTypes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "ports": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 65535 }, "uniqueItems": true },
+        "probes": { "type": "array", "items": { "$ref": "#/$defs/probe" } }
+      }
+    },
     "channels": {
-      "type": "object", "minProperties": 1,
+      "type": "object",
+      "minProperties": 1,
       "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
       "additionalProperties": { "$ref": "#/$defs/channel" }
     },
@@ -24,14 +33,30 @@
       "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
       "additionalProperties": { "$ref": "#/$defs/operation" }
     },
-    "workflows": { "type": "object" },
-    "state": { "type": "object", "additionalProperties": { "type": "object" } },
+    "workflows": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
+      "additionalProperties": { "$ref": "#/$defs/workflow" }
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "oneOf": [
+            { "type": "string", "pattern": "^\\$" },
+            { "$ref": "#/$defs/stateMapping" }
+          ]
+        }
+      }
+    },
     "ui": { "type": "object" },
     "verification": { "type": "object" }
   },
   "$defs": {
     "channel": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "required": ["kind", "scheme", "port"],
       "properties": {
         "kind": { "enum": ["http", "websocket", "mqtt", "ftp", "tcp"] },
@@ -44,22 +69,201 @@
       }
     },
     "operation": {
-      "type": "object", "additionalProperties": false, "required": ["channel"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["channel"],
       "properties": {
         "channel": { "type": "string" },
         "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
         "path": { "type": "string", "pattern": "^(/.*)?$" },
-        "send": { "type": "object" },
+        "send": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "json": {},
+            "text": { "type": "string" },
+            "headers": { "type": "object" },
+            "query": { "type": "object" },
+            "multipart": { "$ref": "#/$defs/multipart" }
+          }
+        },
         "receive": { "$ref": "#/$defs/receive" },
         "map": { "type": "string" }
       }
     },
+    "multipart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["files"],
+      "properties": {
+        "fields": { "type": "object" },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["field", "filename", "bytesVariable"],
+            "properties": {
+              "field": { "type": "string" },
+              "filename": { "type": "string" },
+              "bytesVariable": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps"],
+      "properties": {
+        "maxExecutedSteps": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/workflowStep" }
+        }
+      }
+    },
+    "workflowStep": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type", "operation"],
+          "properties": {
+            "type": { "const": "operation" },
+            "operation": { "type": "string" },
+            "saveAs": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "condition", "then"],
+          "properties": {
+            "type": { "const": "branch" },
+            "condition": { "$ref": "#/$defs/condition" },
+            "then": { "type": "array", "items": { "$ref": "#/$defs/workflowStep" } },
+            "else": { "type": "array", "items": { "$ref": "#/$defs/workflowStep" } }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "milliseconds"],
+          "properties": {
+            "type": { "const": "wait" },
+            "milliseconds": { "type": "integer", "minimum": 0, "maximum": 30000 }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "maxAttempts", "steps"],
+          "properties": {
+            "type": { "const": "retry" },
+            "maxAttempts": { "type": "integer", "minimum": 1, "maximum": 20 },
+            "delayMilliseconds": { "type": "integer", "minimum": 0, "maximum": 30000 },
+            "steps": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/workflowStep" } }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "name"],
+          "properties": {
+            "type": { "const": "set" },
+            "name": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$" },
+            "value": {},
+            "from": { "type": "string", "pattern": "^\\$" }
+          },
+          "oneOf": [
+            { "required": ["value"], "properties": { "value": {} } },
+            { "required": ["from"], "properties": { "from": {} } }
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "condition"],
+          "properties": {
+            "type": { "const": "assert" },
+            "condition": { "$ref": "#/$defs/condition" },
+            "message": { "type": "string", "maxLength": 300 }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "stage"],
+          "properties": {
+            "type": { "const": "emit" },
+            "stage": { "type": "string", "maxLength": 80 },
+            "progress": { "type": "number", "minimum": 0, "maximum": 1 },
+            "message": { "type": "string", "maxLength": 300 }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "condition": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string", "pattern": "^\\$" },
+        "variable": { "type": "string" },
+        "equals": {},
+        "notEquals": {},
+        "exists": { "type": "boolean" }
+      },
+      "oneOf": [
+        { "required": ["path"], "properties": { "path": {} } },
+        { "required": ["variable"], "properties": { "variable": {} } }
+      ],
+      "additionalProperties": false
+    },
     "receive": {
-      "type": "object", "additionalProperties": false,
+      "type": "object",
+      "additionalProperties": false,
       "properties": {
         "mode": { "enum": ["none", "first", "matching", "close"] },
         "maxMessages": { "type": "integer", "minimum": 1, "maximum": 1000 },
-        "until": { "type": "object" }
+        "until": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "pathExists": { "type": "string", "pattern": "^\\$" },
+            "equals": {
+              "type": "object",
+              "required": ["path", "value"],
+              "properties": { "path": { "type": "string", "pattern": "^\\$" }, "value": {} }
+            }
+          }
+        }
+      }
+    },
+    "probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operation"],
+      "properties": {
+        "operation": { "type": "string" },
+        "weight": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+        "required": { "type": "boolean" }
+      }
+    },
+    "stateMapping": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^\\$" },
+        "default": {},
+        "scale": { "type": "number" },
+        "enum": { "type": "object" }
       }
     }
   }

@@ -1,5 +1,5 @@
 {
-  "$schema": "../schema/profile-v2.schema.json",
+  "$schema": "../profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.creality-local-v2.experimental",
   "version": "2.0.0-alpha.1",
@@ -9,7 +9,7 @@
     "status": "experimental",
     "replaces": "creality_local"
   },
-  "permissions": ["statusRead"],
+  "permissions": ["statusRead", "fileUpload", "printStart"],
   "credentials": {},
   "discovery": {
     "serviceTypes": ["_creality._tcp.local", "_cxswbox._tcp.local"],
@@ -55,9 +55,59 @@
         "maxMessages": 20
       },
       "map": "status"
+    },
+    "uploadFile": {
+      "channel": "web",
+      "method": "POST",
+      "path": "/upload/{{filename}}",
+      "send": {
+        "multipart": {
+          "files": [
+            {
+              "field": "{{filename}}",
+              "filename": "{{filename}}",
+              "bytesVariable": "gcodeBytes"
+            }
+          ]
+        }
+      }
+    },
+    "startPrint": {
+      "channel": "control",
+      "send": {
+        "json": {
+          "opGcodeFile": "printprt:/mnt/UDISK/printer_data/gcodes/{{filename}}",
+          "enableSelfTest": 0
+        }
+      },
+      "receive": { "mode": "none" }
     }
   },
-  "workflows": {},
+  "workflows": {
+    "uploadAndStart": {
+      "maxExecutedSteps": 20,
+      "steps": [
+        { "type": "emit", "stage": "uploading", "progress": 0 },
+        { "type": "operation", "operation": "uploadFile", "saveAs": "upload" },
+        { "type": "emit", "stage": "uploaded", "progress": 1 },
+        {
+          "type": "branch",
+          "condition": { "variable": "startPrint", "equals": true },
+          "then": [
+            { "type": "wait", "milliseconds": 750 },
+            { "type": "emit", "stage": "startingPrint" },
+            { "type": "operation", "operation": "startPrint", "saveAs": "start" }
+          ]
+        }
+      ]
+    },
+    "startPrint": {
+      "maxExecutedSteps": 5,
+      "steps": [
+        { "type": "operation", "operation": "startPrint", "saveAs": "start" }
+      ]
+    }
+  },
   "state": {
     "identity": {
       "printer.identity.model": { "path": "$.machine_type", "default": "Creality" },
@@ -78,17 +128,7 @@
   "verification": {
     "level": "fixtureOnly",
     "testedOperations": ["probeInfo", "status"],
-    "missingForParity": [
-      "upload workflow",
-      "print start workflow",
-      "camera",
-      "fans",
-      "CFS",
-      "files",
-      "history",
-      "timelapses",
-      "alerts",
-      "complete UI"
-    ]
+    "untestedOperations": ["uploadFile", "startPrint"],
+    "testedWorkflows": []
   }
 }

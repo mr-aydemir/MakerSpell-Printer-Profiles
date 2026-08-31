@@ -114,6 +114,20 @@
       },
       "map": "files"
     },
+    "listFilaments": {
+      "channel": "control",
+      "send": {
+        "json": { "method": "get", "params": { "boxsInfo": 1 } }
+      },
+      "receive": {
+        "mode": "matching",
+        "until": {
+          "pathExistsAny": ["$.boxsInfo", "$.materialBoxs", "$.cfsConnect"]
+        },
+        "maxMessages": 20
+      },
+      "map": "filaments"
+    },
     "pause": {
       "channel": "control",
       "send": { "json": { "pause": 1 } },
@@ -379,6 +393,39 @@
             "layerHeightMm": { "index": 3, "type": "double" }
           },
           "templates": { "path": "{{directory}}/{{name}}" }
+        }
+      }
+    },
+    "filaments": {
+      "printer.filaments": {
+        "expand": {
+          "paths": ["$.boxsInfo.materialBoxs", "$.materialBoxs"],
+          "childrenPath": "$.materials",
+          "minimumChildren": 4,
+          "maxOutput": 32,
+          "fields": {
+            "index": "$.outputIndex",
+            "hasFilament": {
+              "path": "$.child.state",
+              "default": false,
+              "enum": { "1": true, "0": false, "-1": false }
+            },
+            "colorHex": {
+              "paths": ["$.child.color", "$.child.colorHex"]
+            },
+            "materialType": {
+              "paths": ["$.child.type", "$.child.filamentType"]
+            },
+            "vendor": "$.child.vendor",
+            "slotLabel": "$.child.name"
+          },
+          "fallback": [
+            {
+              "index": 0,
+              "hasFilament": true,
+              "slotLabel": "External spool"
+            }
+          ]
         }
       }
     }

@@ -251,10 +251,11 @@ action argument transforms (enum, scale, clamp, case and rounding). The
 experimental Creality profile uses the same normalized file list for modern
 and legacy firmware and declares camera, fan and movement bindings in JSON.
 
-Physical MQTT and FTP mock-server coverage, nested CFS material-box mapping,
-the remaining registered UI components and the signed catalog gate remain
-required before the experimental profile can replace the verified compiled
-Creality adapter.
+Nested list expansion now maps CFS material boxes into physical slots while
+retaining empty positions and a safe external-spool fallback. Physical MQTT
+and FTP mock-server coverage, the remaining registered UI components and
+device conformance remain required before the experimental profile can replace
+the verified compiled Creality adapter.
 
 ### B — Workflow engine
 

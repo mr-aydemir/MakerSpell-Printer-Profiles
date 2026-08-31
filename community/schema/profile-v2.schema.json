@@ -50,7 +50,16 @@
         }
       }
     },
-    "ui": { "type": "object" },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pages": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/uiPage" }
+        }
+      }
+    },
     "verification": { "type": "object" }
   },
   "$defs": {
@@ -225,6 +234,41 @@
         { "required": ["variable"], "properties": { "variable": {} } }
       ],
       "additionalProperties": false
+    },
+    "uiPage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sections"],
+      "properties": {
+        "layout": { "enum": ["adaptiveDashboard", "list"] },
+        "sections": {
+          "type": "array",
+          "maxItems": 32,
+          "items": { "$ref": "#/$defs/uiSection" }
+        }
+      }
+    },
+    "uiSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "component", "bind"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
+        "component": {
+          "enum": ["printerStatus", "activeJob", "temperatureControls", "fanControls"]
+        },
+        "bind": { "type": "string", "pattern": "^printer(?:\\..+)?$" },
+        "title": {
+          "oneOf": [
+            { "type": "string", "maxLength": 120 },
+            {
+              "type": "object",
+              "additionalProperties": { "type": "string", "maxLength": 120 }
+            }
+          ]
+        },
+        "minWidth": { "type": "number", "minimum": 200, "maximum": 1200 }
+      }
     },
     "receive": {
       "type": "object",

@@ -286,6 +286,25 @@ device conformance confirms indexing paths and firmware variants.
 
 Acceptance: fixtures render the complete control page without legacy sections.
 
+#### Current Phase C implementation
+
+The first registered v2 UI components now render inside the real printer
+control screen when an explicit v2 transport is active:
+
+- `printerStatus`, `activeJob`, `temperatureControls` and `fanControls`;
+- profile-owned section order and normalized-state bindings;
+- localized profile titles with language fallback;
+- adaptive one, two and three-column layouts for phone, tablet and desktop;
+- strict component allow-listing, binding validation and duplicate section ID
+  rejection;
+- widget tests for Turkish localization, desktop/phone reflow and rejection of
+  arbitrary component names.
+
+This is an incremental renderer, not yet Phase C acceptance. Camera, motion,
+files, filaments, history, timelapses, alerts, action controls and legacy-page
+suppression still need registered components before a profile can claim a
+complete JSON-owned control page.
+
 ### D — Creality reference migration
 
 - `/info` HTTP probe on port 80;

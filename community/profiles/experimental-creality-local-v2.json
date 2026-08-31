@@ -124,7 +124,39 @@
       "printer.motion.position": "$.curPosition"
     }
   },
-  "ui": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": { "en": "Printer status", "tr": "Yazıcı durumu" }
+          },
+          {
+            "id": "job",
+            "component": "activeJob",
+            "bind": "printer.job",
+            "title": { "en": "Active job", "tr": "Aktif iş" }
+          },
+          {
+            "id": "temperatures",
+            "component": "temperatureControls",
+            "bind": "printer.temperatures",
+            "title": { "en": "Temperatures", "tr": "Sıcaklıklar" }
+          },
+          {
+            "id": "fans",
+            "component": "fanControls",
+            "bind": "printer.fans",
+            "title": { "en": "Fans", "tr": "Fanlar" }
+          }
+        ]
+      }
+    }
+  },
   "verification": {
     "level": "fixtureOnly",
     "testedOperations": ["probeInfo", "status"],

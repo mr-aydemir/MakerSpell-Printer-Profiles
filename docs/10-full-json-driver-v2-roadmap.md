@@ -313,22 +313,25 @@ Acceptance: fixtures render the complete control page without legacy sections.
 
 #### Current Phase C implementation
 
-The first registered v2 UI components now render inside the real printer
-control screen when an explicit v2 transport is active:
+The registered v2 component layer now owns the real printer control page when
+an explicit v2 transport is active:
 
-- `printerStatus`, `activeJob`, `temperatureControls` and `fanControls`;
-- profile-owned section order and normalized-state bindings;
+- status and active-job controls;
+- camera and device controls (temperatures, fans, light and speed);
+- filament bays, printer files and motion;
+- object exclusion, device interface, history and timelapses;
+- profile-owned section order and capability-driven visibility;
 - localized profile titles with language fallback;
 - adaptive one, two and three-column layouts for phone, tablet and desktop;
 - strict component allow-listing, binding validation and duplicate section ID
   rejection;
-- widget tests for Turkish localization, desktop/phone reflow and rejection of
-  arbitrary component names.
+- legacy section suppression, so the JSON page is not followed by a duplicate
+  compiled layout;
+- widget tests for localization, reflow, live-builder ordering/visibility and
+  rejection of arbitrary component names.
 
-This is an incremental renderer, not yet Phase C acceptance. Camera, motion,
-files, filaments, history, timelapses, alerts, action controls and legacy-page
-suppression still need registered components before a profile can claim a
-complete JSON-owned control page.
+The registered components remain audited Flutter widgets. JSON composes and
+binds them but cannot provide executable widget code.
 
 ### D — Creality reference migration
 

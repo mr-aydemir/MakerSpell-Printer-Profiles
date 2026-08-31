@@ -75,8 +75,35 @@ rules adapt the generic command to the wire format without Dart code:
 }
 ```
 
-Available safe transforms are `enum`, `default`, `scale`, `clamp`, `round`
-and `uppercase`. There is no script or expression evaluation.
+Available safe transforms are `enum`, `default`, `scale`, `clamp`, `round`,
+`uppercase`, `required`, `allowed` and `nonZero`. There is no script or
+expression evaluation.
+
+## Live interface composition
+
+`ui.pages.control.sections` is the ordered source of the live printer control
+screen when a v2 transport is selected. JSON chooses from an audited Flutter
+component registry; it cannot name a Dart class or inject widget code.
+
+Registered components currently include:
+
+- `printerStatus`, `activeJob`
+- `camera`, `deviceControls`
+- `filamentBay`, `fileBrowser`
+- `motionControls`, `excludeObjects`
+- `deviceInterface`, `printHistory`, `timelapses`
+- the compatibility components `temperatureControls` and `fanControls`
+
+The runtime hides a declared component when its required capability is not
+available. For example, `camera` is shown only when the profile declares at
+least one safe camera candidate. The same section order is used on phones,
+tablets and desktop; the `adaptiveDashboard` layout changes its column count.
+
+The in-app v2 editor exposes identity, permissions, channels, operations,
+workflows, actions, normalized state, media and UI as separate form cards. Its
+JSON and Preview tabs edit the same document. A local save keeps one previous
+validated revision so contributors can restore it without reinstalling the
+application.
 
 ## Cameras
 

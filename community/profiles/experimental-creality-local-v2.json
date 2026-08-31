@@ -15,7 +15,8 @@
     "fileUpload",
     "printStart",
     "printControl",
-    "deviceControl"
+    "deviceControl",
+    "cameraRead"
   ],
   "credentials": {},
   "discovery": {
@@ -42,6 +43,13 @@
       "timeoutMs": 5000,
       "maxResponseBytes": 8388608,
       "lifecycle": "perOperation"
+    },
+    "camera": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 8080,
+      "timeoutMs": 3000,
+      "maxResponseBytes": 1048576
     }
   },
   "operations": {
@@ -145,6 +153,80 @@
       "channel": "control",
       "send": { "json": { "setFeedratePct": "{{value}}" } },
       "receive": { "mode": "none" }
+    },
+    "setFan": {
+      "channel": "control",
+      "send": { "json": { "gcodeCmd": "M106 P{{fanIndex}} S{{pwm}}" } },
+      "receive": { "mode": "none" }
+    },
+    "move": {
+      "channel": "control",
+      "send": { "json": { "setPosition": "{{axis}}{{distance}} F{{feedRate}}" } },
+      "receive": { "mode": "none" }
+    },
+    "home": {
+      "channel": "control",
+      "send": { "json": { "autohome": "{{axes}}" } },
+      "receive": { "mode": "none" }
+    }
+  },
+  "actions": {
+    "partFan": {
+      "operation": "setFan",
+      "arguments": {
+        "fanIndex": {
+          "from": "fanId",
+          "default": "model",
+          "enum": {
+            "part": 0,
+            "model": 0,
+            "P0": 0,
+            "rear": 1,
+            "case": 1,
+            "P1": 1,
+            "auxiliary": 2,
+            "side": 2,
+            "P2": 2
+          }
+        },
+        "pwm": { "from": "value", "scale": 2.55, "clamp": [0, 255], "round": true }
+      }
+    },
+    "move": {
+      "operation": "move",
+      "arguments": {
+        "axis": { "from": "axis", "uppercase": true },
+        "distance": { "from": "value", "clamp": [-100, 100] },
+        "feedRate": {
+          "from": "axis",
+          "uppercase": true,
+          "enum": { "X": 3000, "Y": 3000, "Z": 600 }
+        }
+      }
+    },
+    "home": {
+      "operation": "home",
+      "arguments": { "axes": { "from": "axes", "uppercase": true } }
+    }
+  },
+  "media": {
+    "camera": {
+      "candidates": [
+        {
+          "id": "creality-mjpeg-primary",
+          "channel": "camera",
+          "path": "/",
+          "query": { "action": "stream" },
+          "kind": "mjpeg"
+        },
+        {
+          "id": "creality-mjpeg-secondary",
+          "channel": "camera",
+          "path": "/",
+          "query": { "action": "stream_0" },
+          "kind": "mjpeg"
+        }
+      ]
     }
   },
   "workflows": {
@@ -169,7 +251,7 @@
                   "type": "set",
                   "name": "remotePath",
                   "select": {
-                    "sources": ["$.results.files.payload.retGcodeFileInfo2"],
+                    "sources": ["$.results.files.normalized.printer.files"],
                     "where": {
                       "path": "$.name",
                       "equalsVariable": "filename",
@@ -204,7 +286,7 @@
               "type": "set",
               "name": "remotePath",
               "select": {
-                "sources": ["$.results.files.payload.retGcodeFileInfo2"],
+                "sources": ["$.results.files.normalized.printer.files"],
                 "where": {
                   "path": "$.name",
                   "equalsVariable": "filename",
@@ -283,6 +365,20 @@
           "sizeBytes": "$.file_size",
           "material": "$.material",
           "layerHeightMm": "$.layerHeight"
+        },
+        "fallbackDelimited": {
+          "path": "$.retGcodeFileInfo.fileInfo",
+          "recordSeparator": ";",
+          "fieldSeparator": ":",
+          "maxRecords": 2000,
+          "maxFields": 16,
+          "fields": {
+            "directory": { "index": 0 },
+            "name": { "index": 1 },
+            "sizeBytes": { "index": 2, "type": "int" },
+            "layerHeightMm": { "index": 3, "type": "double" }
+          },
+          "templates": { "path": "{{directory}}/{{name}}" }
         }
       }
     }

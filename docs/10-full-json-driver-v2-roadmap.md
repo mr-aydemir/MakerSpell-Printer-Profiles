@@ -95,8 +95,10 @@ Channels are independent, so HTTP and WebSocket can use different ports:
 }
 ```
 
-Initial audited channel kinds are HTTP/HTTPS, WebSocket/WSS, MQTT/MQTTS,
-FTP/FTPS and TCP/TCPS line console. Profiles cannot load executable code.
+Audited channel kinds are HTTP/HTTPS, WebSocket/WSS, MQTT/MQTTS, FTP/FTPS
+and TCP/TCPS line console. All five are executable in the v2 runtime and are
+restricted to the selected printer's address. Profiles cannot load executable
+code.
 
 ### Operations
 
@@ -242,10 +244,17 @@ The application now contains the first executable v2 slice:
 - the bundled experimental Creality profile exercises HTTP port 80 and
   WebSocket port 9999 without claiming feature parity.
 
-MQTT, FTP and TCP already exist as v1 runtime primitives, but their v2 channel
-adapters, workflow engine and full UI renderer remain Phase A/B/C work. The
-experimental profile must not replace the verified compiled Creality adapter
-until Phase D acceptance passes.
+The v2 runtime now executes HTTP, WebSocket, MQTT, FTP/FTPS and bounded TCP
+console operations. It also provides multipart upload progress, bounded legacy
+delimited-response decoding, profile-defined camera candidates, and safe
+action argument transforms (enum, scale, clamp, case and rounding). The
+experimental Creality profile uses the same normalized file list for modern
+and legacy firmware and declares camera, fan and movement bindings in JSON.
+
+Physical MQTT and FTP mock-server coverage, nested CFS material-box mapping,
+the remaining registered UI components and the signed catalog gate remain
+required before the experimental profile can replace the verified compiled
+Creality adapter.
 
 ### B — Workflow engine
 

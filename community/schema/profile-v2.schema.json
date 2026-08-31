@@ -48,6 +48,18 @@
       "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
       "additionalProperties": { "$ref": "#/$defs/operation" }
     },
+    "actions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
+      "additionalProperties": { "$ref": "#/$defs/actionBinding" }
+    },
+    "media": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "camera": { "$ref": "#/$defs/camera" }
+      }
+    },
     "workflows": {
       "type": "object",
       "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
@@ -78,6 +90,96 @@
     "verification": { "type": "object" }
   },
   "$defs": {
+    "actionBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operation"],
+      "properties": {
+        "operation": { "type": "string" },
+        "arguments": {
+          "type": "object",
+          "maxProperties": 24,
+          "additionalProperties": { "$ref": "#/$defs/actionArgument" }
+        }
+      }
+    },
+    "actionArgument": {
+      "oneOf": [
+        {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" },
+            { "type": "boolean" },
+            { "type": "null" }
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "from": { "enum": ["value", "enabled", "axis", "axes", "fanId"] },
+            "value": {},
+            "default": {},
+            "scale": { "type": "number", "minimum": -100000, "maximum": 100000 },
+            "clamp": {
+              "type": "array",
+              "prefixItems": [{ "type": "number" }, { "type": "number" }],
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "round": { "type": "boolean" },
+            "uppercase": { "type": "boolean" },
+            "enum": { "type": "object" }
+          },
+          "anyOf": [
+            {
+              "properties": { "from": {} },
+              "required": ["from"]
+            },
+            {
+              "properties": { "value": {} },
+              "required": ["value"]
+            }
+          ]
+        }
+      ]
+    },
+    "camera": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidates"],
+      "properties": {
+        "candidates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["channel", "path", "kind"],
+            "properties": {
+              "id": { "type": "string", "maxLength": 80 },
+              "channel": { "type": "string" },
+              "path": { "type": "string", "pattern": "^/" },
+              "query": {
+                "type": "object",
+                "maxProperties": 16,
+                "additionalProperties": {
+                  "oneOf": [
+                    { "type": "string" },
+                    { "type": "number" },
+                    { "type": "boolean" }
+                  ]
+                }
+              },
+              "kind": { "enum": ["snapshot", "mjpeg", "webPage", "webRtc", "flv", "rtsp"] },
+              "snapshotRefreshMs": { "type": "integer", "minimum": 250, "maximum": 60000 },
+              "cacheable": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
     "channel": {
       "type": "object",
       "additionalProperties": false,
@@ -90,6 +192,13 @@
         "timeoutMs": { "type": "integer", "minimum": 250, "maximum": 60000 },
         "maxResponseBytes": { "type": "integer", "minimum": 1, "maximum": 8388608 },
         "lifecycle": { "enum": ["perOperation", "session"] }
+        ,"clientId": { "type": "string", "minLength": 1, "maxLength": 128 }
+        ,"keepAliveSeconds": { "type": "integer", "minimum": 5, "maximum": 300 }
+        ,"lineEnding": { "enum": ["none", "lf", "crlf"] }
+        ,"responseMode": { "enum": ["none", "line", "close"] }
+        ,"tlsMode": { "enum": ["implicit", "explicit"] }
+        ,"rootPath": { "type": "string", "pattern": "^/" }
+        ,"username": { "type": "string", "maxLength": 128 }
       }
     },
     "operation": {
@@ -109,6 +218,11 @@
             "headers": { "type": "object" },
             "query": { "type": "object" },
             "multipart": { "$ref": "#/$defs/multipart" }
+            ,"topic": { "type": "string", "minLength": 1, "maxLength": 512 }
+            ,"responseTopic": { "type": "string", "maxLength": 512 }
+            ,"qos": { "type": "integer", "minimum": 0, "maximum": 2 }
+            ,"ftpAction": { "enum": ["list", "upload", "delete"] }
+            ,"bytesVariable": { "type": "string" }
           }
         },
         "receive": { "$ref": "#/$defs/receive" },
@@ -369,6 +483,7 @@
         "default": {},
         "scale": { "type": "number" },
         "enum": { "type": "object" },
+        "fallbackDelimited": { "$ref": "#/$defs/delimitedDecoder" },
         "items": {
           "type": "object",
           "additionalProperties": {
@@ -406,6 +521,42 @@
         { "required": ["value"], "properties": { "value": {} } },
         { "required": ["compose"], "properties": { "compose": {} } }
       ]
+    },
+    "delimitedDecoder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "fields"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^\\$" },
+        "recordSeparator": { "type": "string", "minLength": 1, "maxLength": 4 },
+        "fieldSeparator": { "type": "string", "minLength": 1, "maxLength": 4 },
+        "maxRecords": { "type": "integer", "minimum": 1, "maximum": 5000 },
+        "maxFields": { "type": "integer", "minimum": 1, "maximum": 64 },
+        "fields": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 32,
+          "additionalProperties": {
+            "oneOf": [
+              { "type": "integer", "minimum": 0, "maximum": 63 },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["index"],
+                "properties": {
+                  "index": { "type": "integer", "minimum": 0, "maximum": 63 },
+                  "type": { "enum": ["string", "int", "double"] }
+                }
+              }
+            ]
+          }
+        },
+        "templates": {
+          "type": "object",
+          "maxProperties": 16,
+          "additionalProperties": { "type": "string", "maxLength": 512 }
+        }
+      }
     },
     "fieldMapping": {
       "type": "object",

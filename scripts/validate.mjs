@@ -89,6 +89,22 @@ if (!validateRuntimeCatalog(runtimeCatalog)) {
     )}`,
   );
 }
+for (const entry of catalog.profiles) {
+  if (!entry.url.startsWith('../community/profiles/')) continue;
+  const profilePath = path.normalize(
+    path.join('catalog', entry.url),
+  );
+  const profileBody = fs
+    .readFileSync(profilePath, 'utf8')
+    .replace(/\r\n/g, '\n');
+  const digest = crypto
+    .createHash('sha256')
+    .update(Buffer.from(profileBody, 'utf8'))
+    .digest('hex');
+  if (digest !== entry.sha256.toLowerCase()) {
+    throw new Error(`Catalog digest is stale for ${entry.url}.`);
+  }
+}
 // Git may check text files out with CRLF on Windows. The catalog signs the
 // canonical repository representation, so line-ending conversion must not
 // make a valid registry appear tampered with.

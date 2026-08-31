@@ -15,6 +15,7 @@ Read it in order the first time; each page builds on the previous one.
 8. [Troubleshooting](08-troubleshooting.md)
 9. [Building a declarative driver](09-declarative-driver.md)
 10. [Full JSON printer driver v2 roadmap](10-full-json-driver-v2-roadmap.md)
+11. [V2 channels and actions](11-v2-channels-and-actions.md)
 
 ## The shortest possible explanation
 

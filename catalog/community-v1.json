@@ -3,7 +3,11 @@
   "profiles": [
     {
       "url": "../community/profiles/example-klipper.json",
-      "sha256": "12bbd64787d86c6113640e6a17096656782ee1ecb84b67914a9cc97c9a67061c"
+      "sha256": "0efc17428eade24a4dea0bcf87b95d6039a0753751e49a1d3b169f0663c4c3d5"
+    },
+    {
+      "url": "../community/profiles/experimental-creality-local-v2.json",
+      "sha256": "f78d0c5293f17bef52ba183731ac13763b2b7d157b0d1af86c50755c93d595e0"
     }
   ]
 }

@@ -229,6 +229,24 @@ v2 profile cannot silently fall back to one and still claim
 
 Acceptance: mock-server tests cover every channel primitive.
 
+#### Current Phase A implementation
+
+The application now contains the first executable v2 slice:
+
+- v1 and v2 profiles load side by side;
+- HTTP and WebSocket are independent named channels with separate ports;
+- HTTP probes and bounded WebSocket matching responses execute against the
+  selected printer address;
+- probe evidence produces a confidence score and required-probe result;
+- safe state mappings merge into an observable normalized state store;
+- the bundled experimental Creality profile exercises HTTP port 80 and
+  WebSocket port 9999 without claiming feature parity.
+
+MQTT, FTP and TCP already exist as v1 runtime primitives, but their v2 channel
+adapters, workflow engine and full UI renderer remain Phase A/B/C work. The
+experimental profile must not replace the verified compiled Creality adapter
+until Phase D acceptance passes.
+
 ### B — Workflow engine
 
 - upload/start, polling, retry and firmware alternatives;
@@ -284,4 +302,3 @@ in conformance tests or verified devices.
 - unrestricted Internet endpoints;
 - unbounded loops, streams or responses;
 - claiming verification from UI preview or one vote.
-

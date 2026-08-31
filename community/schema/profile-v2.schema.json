@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://makerspell.com/schemas/community-printer-profile-v2.json",
+  "title": "MakerSpell full JSON printer driver v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "version", "channels", "operations", "state"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 2 },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)+$" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+" },
+    "identity": { "type": "object" },
+    "permissions": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "credentials": { "type": "object" },
+    "discovery": { "type": "object" },
+    "channels": {
+      "type": "object", "minProperties": 1,
+      "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
+      "additionalProperties": { "$ref": "#/$defs/channel" }
+    },
+    "operations": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
+      "additionalProperties": { "$ref": "#/$defs/operation" }
+    },
+    "workflows": { "type": "object" },
+    "state": { "type": "object", "additionalProperties": { "type": "object" } },
+    "ui": { "type": "object" },
+    "verification": { "type": "object" }
+  },
+  "$defs": {
+    "channel": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "scheme", "port"],
+      "properties": {
+        "kind": { "enum": ["http", "websocket", "mqtt", "ftp", "tcp"] },
+        "scheme": { "enum": ["http", "https", "ws", "wss", "mqtt", "mqtts", "ftp", "ftps", "tcp", "tcps"] },
+        "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "path": { "type": "string", "pattern": "^(/.*)?$" },
+        "timeoutMs": { "type": "integer", "minimum": 250, "maximum": 60000 },
+        "maxResponseBytes": { "type": "integer", "minimum": 1, "maximum": 8388608 },
+        "lifecycle": { "enum": ["perOperation", "session"] }
+      }
+    },
+    "operation": {
+      "type": "object", "additionalProperties": false, "required": ["channel"],
+      "properties": {
+        "channel": { "type": "string" },
+        "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+        "path": { "type": "string", "pattern": "^(/.*)?$" },
+        "send": { "type": "object" },
+        "receive": { "$ref": "#/$defs/receive" },
+        "map": { "type": "string" }
+      }
+    },
+    "receive": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["none", "first", "matching", "close"] },
+        "maxMessages": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "until": { "type": "object" }
+      }
+    }
+  }
+}

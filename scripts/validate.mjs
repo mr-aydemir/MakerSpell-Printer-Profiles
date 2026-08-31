@@ -24,16 +24,21 @@ if (files === 0) throw new Error('No JSON profiles found');
 const profileSchema = JSON.parse(
   fs.readFileSync('community/schema/profile.schema.json', 'utf8'),
 );
+const profileV2Schema = JSON.parse(
+  fs.readFileSync('community/schema/profile-v2.schema.json', 'utf8'),
+);
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
 const validateProfile = ajv.compile(profileSchema);
+const validateProfileV2 = ajv.compile(profileV2Schema);
 for (const file of walk('community/profiles')) {
   if (!file.endsWith('.json')) continue;
   const profile = JSON.parse(fs.readFileSync(file, 'utf8'));
-  if (!validateProfile(profile)) {
+  const validator = profile.schemaVersion === 2 ? validateProfileV2 : validateProfile;
+  if (!validator(profile)) {
     throw new Error(
       `${file} failed profile schema validation:\n${ajv.errorsText(
-        validateProfile.errors,
+        validator.errors,
         { separator: '\n' },
       )}`,
     );

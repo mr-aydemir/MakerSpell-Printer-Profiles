@@ -1,0 +1,94 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.creality-local-v2.experimental",
+  "version": "2.0.0-alpha.1",
+  "identity": {
+    "name": "Creality Local v2 Experimental",
+    "models": ["K1", "K1 Max", "Hi", "Hi Combo"],
+    "status": "experimental",
+    "replaces": "creality_local"
+  },
+  "permissions": ["statusRead"],
+  "credentials": {},
+  "discovery": {
+    "serviceTypes": ["_creality._tcp.local", "_cxswbox._tcp.local"],
+    "ports": [80, 9999],
+    "probes": [
+      { "operation": "probeInfo", "weight": 3, "required": true },
+      { "operation": "status", "weight": 2, "required": false }
+    ]
+  },
+  "channels": {
+    "web": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 80,
+      "timeoutMs": 3000,
+      "maxResponseBytes": 1048576
+    },
+    "control": {
+      "kind": "websocket",
+      "scheme": "ws",
+      "port": 9999,
+      "path": "/",
+      "timeoutMs": 5000,
+      "maxResponseBytes": 8388608,
+      "lifecycle": "perOperation"
+    }
+  },
+  "operations": {
+    "probeInfo": {
+      "channel": "web",
+      "method": "GET",
+      "path": "/info",
+      "map": "identity"
+    },
+    "status": {
+      "channel": "control",
+      "send": {
+        "json": { "method": "get", "params": { "reqGcodeFile": 1 } }
+      },
+      "receive": {
+        "mode": "matching",
+        "until": { "pathExists": "$.deviceState" },
+        "maxMessages": 20
+      },
+      "map": "status"
+    }
+  },
+  "workflows": {},
+  "state": {
+    "identity": {
+      "printer.identity.model": { "path": "$.machine_type", "default": "Creality" },
+      "printer.identity.mac": "$.mac"
+    },
+    "status": {
+      "printer.connection.state": { "path": "$.deviceState", "default": "connected" },
+      "printer.job.progress": { "path": "$.printProgress", "scale": 0.01 },
+      "printer.job.filename": "$.printFileName",
+      "printer.temperatures.nozzle.actual": "$.nozzleTemp",
+      "printer.temperatures.nozzle.target": "$.targetNozzleTemp",
+      "printer.temperatures.bed.actual": "$.bedTemp0",
+      "printer.temperatures.bed.target": "$.targetBedTemp0",
+      "printer.motion.position": "$.curPosition"
+    }
+  },
+  "ui": {},
+  "verification": {
+    "level": "fixtureOnly",
+    "testedOperations": ["probeInfo", "status"],
+    "missingForParity": [
+      "upload workflow",
+      "print start workflow",
+      "camera",
+      "fans",
+      "CFS",
+      "files",
+      "history",
+      "timelapses",
+      "alerts",
+      "complete UI"
+    ]
+  }
+}

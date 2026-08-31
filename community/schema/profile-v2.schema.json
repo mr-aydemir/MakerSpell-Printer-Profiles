@@ -432,7 +432,7 @@
       "properties": {
         "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
         "component": {
-          "enum": ["printerStatus", "activeJob", "temperatureControls", "fanControls"]
+          "enum": ["printerStatus", "activeJob", "temperatureControls", "fanControls", "deviceControls", "camera", "fileBrowser", "filamentBay", "motionControls", "excludeObjects", "deviceInterface", "printHistory", "timelapses"]
         },
         "bind": { "type": "string", "pattern": "^printer(?:\\..+)?$" },
         "title": {

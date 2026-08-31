@@ -456,16 +456,40 @@
             "title": { "en": "Active job", "tr": "Aktif iş" }
           },
           {
-            "id": "temperatures",
-            "component": "temperatureControls",
-            "bind": "printer.temperatures",
-            "title": { "en": "Temperatures", "tr": "Sıcaklıklar" }
+            "id": "camera",
+            "component": "camera",
+            "bind": "printer.camera",
+            "title": { "en": "Camera", "tr": "Kamera" }
           },
           {
-            "id": "fans",
-            "component": "fanControls",
-            "bind": "printer.fans",
-            "title": { "en": "Fans", "tr": "Fanlar" }
+            "id": "device-controls",
+            "component": "deviceControls",
+            "bind": "printer",
+            "title": { "en": "Printer controls", "tr": "Yazıcı kontrolleri" }
+          },
+          {
+            "id": "filaments",
+            "component": "filamentBay",
+            "bind": "printer.filaments",
+            "title": { "en": "Filaments", "tr": "Filamentler" }
+          },
+          {
+            "id": "files",
+            "component": "fileBrowser",
+            "bind": "printer.files",
+            "title": { "en": "Printer files", "tr": "Yazıcı dosyaları" }
+          },
+          {
+            "id": "motion",
+            "component": "motionControls",
+            "bind": "printer.motion",
+            "title": { "en": "Motion", "tr": "Hareket" }
+          },
+          {
+            "id": "device-interface",
+            "component": "deviceInterface",
+            "bind": "printer",
+            "title": { "en": "Device interface", "tr": "Cihaz arayüzü" }
           }
         ]
       }

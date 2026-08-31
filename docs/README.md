@@ -14,6 +14,7 @@ Read it in order the first time; each page builds on the previous one.
 7. [Testing and contributing](07-testing-and-contributing.md)
 8. [Troubleshooting](08-troubleshooting.md)
 9. [Building a declarative driver](09-declarative-driver.md)
+10. [Full JSON printer driver v2 roadmap](10-full-json-driver-v2-roadmap.md)
 
 ## The shortest possible explanation
 
@@ -23,8 +24,10 @@ A community profile does three things:
 2. describes a sandboxed printer-local protocol or selects a compiled fallback;
 3. maps operations, status fields, permissions, and UI components.
 
-It does **not** install executable code. Ordinary HTTP, WebSocket, and G-code
-protocols run through MakerSpell's reviewed declarative runtime.
+It does **not** install executable code. Reviewed HTTP, WebSocket, MQTT,
+FTP/FTPS, TCP console and G-code protocol primitives run through MakerSpell's
+declarative runtime. The complete JSON-driven v2 design is documented in the
+[v2 roadmap](10-full-json-driver-v2-roadmap.md).
 
 Use [`built-in/registry-v1.json`](../built-in/registry-v1.json) to see what the
 installed application already supports. Use a file under `community/profiles/`

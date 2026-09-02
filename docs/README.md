@@ -38,7 +38,7 @@ to propose a safe, declarative override for a printer or firmware variant.
 
 - [Community profile schema](../community/schema/profile.schema.json)
 - [Full JSON v2 profile schema](../community/schema/profile-v2.schema.json)
-- [Experimental Creality v2 profile](../community/profiles/experimental-creality-local-v2.json)
+- [Community-verified Creality Local v2 profile](../community/profiles/experimental-creality-local-v2.json)
 - [Example Klipper profile](../community/profiles/example-klipper.json)
 - [Built-in adapter registry](../built-in/registry-v1.json)
 - [Contribution rules](../CONTRIBUTING.md)

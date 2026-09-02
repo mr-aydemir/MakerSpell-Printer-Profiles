@@ -1,13 +1,31 @@
 {
-  "$schema": "../profile-v2.schema.json",
+  "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.creality-local-v2.experimental",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0",
   "identity": {
-    "name": "Creality Local v2 Experimental",
+    "name": "Creality Local v2 Community Verified",
     "models": ["K1", "K1 Max", "Hi", "Hi Combo"],
-    "status": "experimental",
-    "replaces": "creality_local"
+    "status": "communityVerified",
+    "replaces": "creality_local",
+    "delegateContracts": ["filamentSlotControl"],
+    "defaultFilamentSlots": [
+      {
+        "index": 0,
+        "hasFilament": true,
+        "slotLabel": "External spool"
+      }
+    ],
+    "localFileMedia": {
+      "channel": "web",
+      "downloadPath": "/downloads/gcode/{{fileName}}",
+      "thumbnailPath": "/downloads/humbnail/{{gcodeBaseName}}.png"
+    },
+    "timelapseMedia": {
+      "channel": "web",
+      "videoPath": "/downloads/video/{{fileName}}",
+      "thumbnailPath": "/downloads/humbnail/{{gcodeBaseName}}.png"
+    }
   },
   "permissions": [
     "statusRead",
@@ -19,6 +37,14 @@
     "cameraRead"
   ],
   "credentials": {},
+  "printPreparation": {
+    "filamentMappingMode": "transportManaged",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "transportManaged",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false,
+    "filamentMappingEncoder": "creality.colorMatch.v1"
+  },
   "discovery": {
     "serviceTypes": ["_creality._tcp.local", "_cxswbox._tcp.local"],
     "ports": [80, 9999],
@@ -97,6 +123,38 @@
       },
       "receive": { "mode": "none" }
     },
+    "preparePrint": {
+      "channel": "control",
+      "permission": "printStart",
+      "send": { "json": { "enableSelfTest": "{{selfTest}}" } },
+      "receive": { "mode": "none" }
+    },
+    "applyColorMatch": {
+      "channel": "control",
+      "permission": "printStart",
+      "send": {
+        "json": {
+          "colorMatch": {
+            "path": "{{remotePath}}",
+            "list": "{{filamentMatches}}"
+          }
+        }
+      },
+      "receive": { "mode": "none" }
+    },
+    "startMultiColorPrint": {
+      "channel": "control",
+      "permission": "printStart",
+      "send": {
+        "json": {
+          "multiColorPrint": {
+            "gcode": "{{remotePath}}",
+            "enableSelfTest": "{{selfTest}}"
+          }
+        }
+      },
+      "receive": { "mode": "none" }
+    },
     "listFiles": {
       "channel": "control",
       "send": {
@@ -127,6 +185,34 @@
         "maxMessages": 20
       },
       "map": "filaments"
+    },
+    "listPrintHistory": {
+      "channel": "control",
+      "send": {
+        "json": { "method": "get", "params": { "reqHistory": 1 } }
+      },
+      "receive": {
+        "mode": "matching",
+        "until": {
+          "pathExistsAny": ["$.historyList", "$.result.historyList", "$.data.historyList"]
+        },
+        "maxMessages": 20
+      },
+      "map": "history"
+    },
+    "listTimelapses": {
+      "channel": "control",
+      "send": {
+        "json": { "method": "get", "params": { "reqElapseVideoList": 1 } }
+      },
+      "receive": {
+        "mode": "matching",
+        "until": {
+          "pathExistsAny": ["$.elapseVideoList", "$.result.elapseVideoList", "$.data.elapseVideoList"]
+        },
+        "maxMessages": 20
+      },
+      "map": "timelapses"
     },
     "pause": {
       "channel": "control",
@@ -294,7 +380,18 @@
                 }
               ]
             },
-            { "type": "operation", "operation": "startPrint", "saveAs": "start" }
+            { "type": "operation", "operation": "preparePrint", "saveAs": "prepare" },
+            {
+              "type": "branch",
+              "condition": { "variable": "useMultiColor", "equals": true },
+              "then": [
+                { "type": "operation", "operation": "applyColorMatch", "saveAs": "colorMatch" },
+                { "type": "operation", "operation": "startMultiColorPrint", "saveAs": "start" }
+              ],
+              "else": [
+                { "type": "operation", "operation": "startPrint", "saveAs": "start" }
+              ]
+            }
           ]
         }
       ]
@@ -303,32 +400,49 @@
       "maxExecutedSteps": 50,
       "steps": [
         {
-          "type": "retry",
-          "maxAttempts": 12,
-          "delayMilliseconds": 750,
-          "steps": [
-            { "type": "operation", "operation": "listFiles", "saveAs": "files" },
+          "type": "branch",
+          "condition": { "variable": "remotePath", "exists": false },
+          "then": [
             {
-              "type": "set",
-              "name": "remotePath",
-              "select": {
-                "sources": ["$.results.files.normalized.printer.files"],
-                "where": {
-                  "path": "$.name",
-                  "equalsVariable": "filename",
-                  "caseInsensitive": true,
-                  "basename": true
+              "type": "retry",
+              "maxAttempts": 12,
+              "delayMilliseconds": 750,
+              "steps": [
+                { "type": "operation", "operation": "listFiles", "saveAs": "files" },
+                {
+                  "type": "set",
+                  "name": "remotePath",
+                  "select": {
+                    "sources": ["$.results.files.normalized.printer.files"],
+                    "where": {
+                      "path": "$.name",
+                      "equalsVariable": "filename",
+                      "caseInsensitive": true,
+                      "basename": true
+                    },
+                    "valuePath": "$.path"
+                  }
                 },
-                "valuePath": "$.path"
-              }
-            },
-            {
-              "type": "assert",
-              "condition": { "variable": "remotePath", "exists": true }
+                {
+                  "type": "assert",
+                  "condition": { "variable": "remotePath", "exists": true }
+                }
+              ]
             }
           ]
         },
-        { "type": "operation", "operation": "startPrint", "saveAs": "start" }
+        { "type": "operation", "operation": "preparePrint", "saveAs": "prepare" },
+        {
+          "type": "branch",
+          "condition": { "variable": "useMultiColor", "equals": true },
+          "then": [
+            { "type": "operation", "operation": "applyColorMatch", "saveAs": "colorMatch" },
+            { "type": "operation", "operation": "startMultiColorPrint", "saveAs": "start" }
+          ],
+          "else": [
+            { "type": "operation", "operation": "startPrint", "saveAs": "start" }
+          ]
+        }
       ]
     }
   },
@@ -390,7 +504,11 @@
           "path": "$.path",
           "sizeBytes": "$.file_size",
           "material": "$.material",
-          "layerHeightMm": "$.layerHeight"
+          "layerHeightMm": "$.layerHeight",
+          "thumbnailPath": "$.thumbnail",
+          "modifiedEpochSeconds": "$.create_time",
+          "durationSeconds": "$.timeCost",
+          "filamentLengthMm": "$.consumables"
         },
         "fallbackDelimited": {
           "path": "$.retGcodeFileInfo.fileInfo",
@@ -408,37 +526,40 @@
         }
       }
     },
+    "history": {
+      "printer.history": {
+        "paths": ["$.historyList", "$.result.historyList", "$.data.historyList"],
+        "default": [],
+        "items": {
+          "id": { "paths": ["$.id", "$.taskId", "$.task_id"] },
+          "path": { "paths": ["$.filename", "$.fileName", "$.path", "$.name"] },
+          "name": { "paths": ["$.fileName", "$.filename", "$.name"] },
+          "status": { "paths": ["$.status", "$.state", "$.result"] },
+          "startedEpochSeconds": { "paths": ["$.starttime", "$.startTime", "$.start_at", "$.create_time"] },
+          "endedEpochSeconds": { "paths": ["$.endtime", "$.endTime", "$.end_at"] },
+          "durationSeconds": { "paths": ["$.usagetime", "$.usageTime", "$.printTime", "$.duration"] },
+          "sizeBytes": { "paths": ["$.file_size", "$.fileSize", "$.size"] },
+          "material": { "paths": ["$.material", "$.materialName"] },
+          "filamentLengthMm": { "paths": ["$.consumables", "$.filamentUsed", "$.materialLength"] }
+        }
+      }
+    },
+    "timelapses": {
+      "printer.timelapses": {
+        "paths": ["$.elapseVideoList", "$.result.elapseVideoList", "$.data.elapseVideoList"],
+        "default": [],
+        "items": {
+          "name": { "paths": ["$.name", "$.gcodeName", "$.modelName", "$.fileName"] },
+          "path": { "paths": ["$.video", "$.videoName", "$.filename", "$.fileName", "$.path"] },
+          "sizeBytes": { "paths": ["$.file_size", "$.fileSize", "$.size"] },
+          "modifiedEpochSeconds": { "paths": ["$.create_time", "$.createTime", "$.ctime", "$.date", "$.time"] },
+          "thumbnailPath": { "paths": ["$.thumbnail", "$.preview", "$.cover"] }
+        }
+      }
+    },
     "filaments": {
       "printer.filaments": {
-        "expand": {
-          "paths": ["$.boxsInfo.materialBoxs", "$.materialBoxs"],
-          "childrenPath": "$.materials",
-          "minimumChildren": 4,
-          "maxOutput": 32,
-          "fields": {
-            "index": "$.outputIndex",
-            "hasFilament": {
-              "path": "$.child.state",
-              "default": false,
-              "enum": { "1": true, "0": false, "-1": false }
-            },
-            "colorHex": {
-              "paths": ["$.child.color", "$.child.colorHex"]
-            },
-            "materialType": {
-              "paths": ["$.child.type", "$.child.filamentType"]
-            },
-            "vendor": "$.child.vendor",
-            "slotLabel": "$.child.name"
-          },
-          "fallback": [
-            {
-              "index": 0,
-              "hasFilament": true,
-              "slotLabel": "External spool"
-            }
-          ]
-        }
+        "decoder": "creality.materialBoxes.v1"
       }
     }
   },
@@ -451,7 +572,37 @@
             "id": "status",
             "component": "printerStatus",
             "bind": "printer.connection",
-            "title": { "en": "Printer status", "tr": "Yazıcı durumu" }
+            "title": { "en": "Printer status", "tr": "Yazıcı durumu" },
+            "content": {
+              "type": "card",
+              "label": { "en": "Printer status", "tr": "Yazıcı durumu" },
+              "options": { "padding": 16, "spacing": 4 },
+              "children": [
+                {
+                  "type": "value",
+                  "bind": "printer.connection.state",
+                  "label": { "en": "Connection", "tr": "Bağlantı" },
+                  "options": { "icon": "printer" }
+                },
+                {
+                  "type": "value",
+                  "bind": "printer.job.state",
+                  "label": { "en": "State", "tr": "Durum" }
+                },
+                {
+                  "type": "value",
+                  "bind": "printer.temperatures.nozzle.actual",
+                  "label": { "en": "Nozzle", "tr": "Nozul" },
+                  "options": { "icon": "temperature", "unit": " °C", "decimals": 0 }
+                },
+                {
+                  "type": "value",
+                  "bind": "printer.temperatures.bed.actual",
+                  "label": { "en": "Bed", "tr": "Tabla" },
+                  "options": { "icon": "bed", "unit": " °C", "decimals": 0 }
+                }
+              ]
+            }
           },
           {
             "id": "job",
@@ -500,12 +651,21 @@
     }
   },
   "verification": {
-    "level": "fixtureOnly",
-    "testedOperations": ["probeInfo", "status"],
-    "untestedOperations": [
+    "level": "deviceVerified",
+    "testedOperations": [
+      "probeInfo",
+      "status",
       "uploadFile",
       "listFiles",
+      "preparePrint",
+      "applyColorMatch",
+      "startMultiColorPrint"
+    ],
+    "untestedOperations": [
       "startPrint",
+      "listFilaments",
+      "listPrintHistory",
+      "listTimelapses",
       "pause",
       "resume",
       "cancel",
@@ -513,8 +673,11 @@
       "setBedTemperature",
       "setLightOn",
       "setLightOff",
-      "setSpeed"
+      "setSpeed",
+      "setFan",
+      "move",
+      "home"
     ],
-    "testedWorkflows": []
+    "testedWorkflows": ["uploadAndStart"]
   }
 }

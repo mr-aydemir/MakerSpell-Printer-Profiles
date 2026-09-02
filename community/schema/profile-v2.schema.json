@@ -28,6 +28,18 @@
       }
     },
     "credentials": { "type": "object" },
+    "printPreparation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "filamentMappingMode": { "enum": ["unsupported", "toolCommands", "transportManaged"] },
+        "calibrationMode": { "enum": ["unsupported", "nativeSelfTest", "klipperBedMesh", "bambuNative"] },
+        "autoLevelingMode": { "enum": ["unsupported", "gcodeBedMesh", "transportManaged"] },
+        "supportsFlowCalibration": { "type": "boolean" },
+        "supportsTimelapseCapture": { "type": "boolean" },
+        "filamentMappingEncoder": { "type": "string", "maxLength": 120 }
+      }
+    },
     "discovery": {
       "type": "object",
       "additionalProperties": false,
@@ -239,6 +251,9 @@
       "required": ["channel"],
       "properties": {
         "channel": { "type": "string" },
+        "permission": {
+          "enum": ["statusRead", "fileListRead", "fileUpload", "printStart", "printControl", "deviceControl", "cameraRead", "gcodeTransform"]
+        },
         "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
         "path": { "type": "string", "pattern": "^(/.*)?$" },
         "send": {
@@ -449,7 +464,7 @@
       "properties": {
         "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
         "component": {
-          "enum": ["printerStatus", "activeJob", "temperatureControls", "fanControls", "deviceControls", "camera", "fileBrowser", "filamentBay", "motionControls", "excludeObjects", "deviceInterface", "printHistory", "timelapses"]
+          "enum": ["printerStatus", "activeJob", "temperatureControls", "fanControls", "deviceControls", "camera", "fileBrowser", "filamentBay", "motionControls", "excludeObjects", "deviceInterface", "printHistory", "timelapses", "dynamic"]
         },
         "bind": { "type": "string", "pattern": "^printer(?:\\..+)?$" },
         "title": {
@@ -461,7 +476,39 @@
             }
           ]
         },
-        "minWidth": { "type": "number", "minimum": 200, "maximum": 1200 }
+        "minWidth": { "type": "number", "minimum": 200, "maximum": 1200 },
+        "content": { "$ref": "#/$defs/uiNode" }
+      }
+    },
+    "uiNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "enum": ["card", "column", "row", "wrap", "text", "value", "icon", "divider", "progress", "button", "toggle", "slider", "spacer"]
+        },
+        "bind": { "type": "string", "pattern": "^printer(?:\\..+)?$" },
+        "action": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,79}$" },
+        "label": {
+          "oneOf": [
+            { "type": "string", "maxLength": 120 },
+            {
+              "type": "object",
+              "maxProperties": 32,
+              "additionalProperties": { "type": "string", "maxLength": 120 }
+            }
+          ]
+        },
+        "options": {
+          "type": "object",
+          "maxProperties": 24
+        },
+        "children": {
+          "type": "array",
+          "maxItems": 24,
+          "items": { "$ref": "#/$defs/uiNode" }
+        }
       }
     },
     "receive": {
@@ -504,6 +551,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "decoder": { "enum": ["creality.materialBoxes.v1"] },
         "path": { "type": "string", "pattern": "^\\$" },
         "paths": {
           "type": "array",
@@ -549,6 +597,7 @@
         }
       },
       "anyOf": [
+        { "required": ["decoder"], "properties": { "decoder": {} } },
         { "required": ["path"], "properties": { "path": {} } },
         { "required": ["paths"], "properties": { "paths": {} } },
         { "required": ["value"], "properties": { "value": {} } },

@@ -2,7 +2,7 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.creality-local-v2.experimental",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "identity": {
     "name": "Creality Local v2 Community Verified",
     "models": ["K1", "K1 Max", "Hi", "Hi Combo"],
@@ -659,7 +659,12 @@
       "listFiles",
       "preparePrint",
       "applyColorMatch",
-      "startMultiColorPrint"
+      "startMultiColorPrint",
+      "setNozzleTemperature",
+      "setBedTemperature",
+      "setFan",
+      "move",
+      "home"
     ],
     "untestedOperations": [
       "startPrint",
@@ -669,14 +674,9 @@
       "pause",
       "resume",
       "cancel",
-      "setNozzleTemperature",
-      "setBedTemperature",
       "setLightOn",
       "setLightOff",
-      "setSpeed",
-      "setFan",
-      "move",
-      "home"
+      "setSpeed"
     ],
     "testedWorkflows": ["uploadAndStart"]
   }

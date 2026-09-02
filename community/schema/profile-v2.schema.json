@@ -28,6 +28,13 @@
       }
     },
     "credentials": { "type": "object" },
+    "supportedFileTypes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9]{1,16}$" }
+    },
     "printPreparation": {
       "type": "object",
       "additionalProperties": false,
@@ -37,7 +44,8 @@
         "autoLevelingMode": { "enum": ["unsupported", "gcodeBedMesh", "transportManaged"] },
         "supportsFlowCalibration": { "type": "boolean" },
         "supportsTimelapseCapture": { "type": "boolean" },
-        "filamentMappingEncoder": { "type": "string", "maxLength": 120 }
+        "filamentMappingEncoder": { "type": "string", "maxLength": 120 },
+        "gcodeTransformStrategy": { "type": "string", "maxLength": 120 }
       }
     },
     "discovery": {
@@ -193,6 +201,7 @@
       "additionalProperties": false,
       "required": ["candidates"],
       "properties": {
+        "startOperation": { "type": "string", "maxLength": 80 },
         "candidates": {
           "type": "array",
           "minItems": 1,
@@ -551,7 +560,12 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "decoder": { "enum": ["creality.materialBoxes.v1"] },
+        "decoder": {
+          "enum": [
+            "creality.materialBoxes.v1",
+            "snapmaker.printTaskConfig.v1"
+          ]
+        },
         "path": { "type": "string", "pattern": "^\\$" },
         "paths": {
           "type": "array",

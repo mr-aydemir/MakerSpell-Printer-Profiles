@@ -8,6 +8,10 @@
     {
       "url": "../community/profiles/experimental-creality-local-v2.json",
       "sha256": "db054f63e0ab3f7514eea5d22558c12b164abbc17bec5b49f0c4c60edfc9302b"
+    },
+    {
+      "url": "../community/profiles/experimental-snapmaker-u1-v2.json",
+      "sha256": "47fa3937c736bbb3b6590409e8738b8cc07924d23b5ef7ba1a7651d94a622074"
     }
   ]
 }

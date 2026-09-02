@@ -1,0 +1,580 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.snapmaker-u1-v2.experimental",
+  "version": "2.0.0-alpha.1",
+  "identity": {
+    "name": "Snapmaker U1 v2 Experimental",
+    "models": ["Snapmaker U1", "U1"],
+    "status": "experimental",
+    "replaces": "snapmaker_moonraker",
+    "delegateContracts": ["filamentSlotControl"],
+    "localFileMedia": {
+      "channel": "api",
+      "downloadPath": "/server/files/gcodes/{{fileName}}"
+    }
+  },
+  "permissions": [
+    "statusRead",
+    "fileListRead",
+    "fileUpload",
+    "printStart",
+    "printControl",
+    "deviceControl",
+    "cameraRead",
+    "gcodeTransform"
+  ],
+  "credentials": {},
+  "supportedFileTypes": ["gcode", "gco", "gc"],
+  "printPreparation": {
+    "filamentMappingMode": "transportManaged",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "transportManaged",
+    "supportsFlowCalibration": true,
+    "supportsTimelapseCapture": false,
+    "filamentMappingEncoder": "snapmaker.u1.map-table.v1",
+    "gcodeTransformStrategy": "snapmaker.u1.native-task-options.v1"
+  },
+  "discovery": {
+    "serviceTypes": ["_snapmaker._tcp.local", "_moonraker._tcp.local"],
+    "ports": [7125],
+    "probes": [
+      { "operation": "probeProductInfo", "weight": 5, "required": true },
+      { "operation": "status", "weight": 2, "required": false }
+    ]
+  },
+  "channels": {
+    "api": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 7125,
+      "timeoutMs": 8000,
+      "maxResponseBytes": 8388608
+    },
+    "rpc": {
+      "kind": "websocket",
+      "scheme": "ws",
+      "port": 7125,
+      "path": "/websocket",
+      "timeoutMs": 45000,
+      "maxResponseBytes": 8388608,
+      "lifecycle": "perOperation"
+    },
+    "panel": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 80,
+      "timeoutMs": 5000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {
+    "probeProductInfo": {
+      "channel": "api",
+      "permission": "statusRead",
+      "method": "GET",
+      "path": "/server/files/config/snapmaker/product_info.json",
+      "map": "identity"
+    },
+    "status": {
+      "channel": "api",
+      "permission": "statusRead",
+      "method": "GET",
+      "path": "/printer/objects/query",
+      "send": {
+        "query": {
+          "print_stats": "",
+          "virtual_sdcard": "",
+          "gcode_move": "",
+          "toolhead": "",
+          "extruder": "",
+          "extruder1": "",
+          "extruder2": "",
+          "extruder3": "",
+          "heater_bed": "",
+          "fan": "",
+          "print_task_config": ""
+        }
+      },
+      "map": "status"
+    },
+    "uploadFile": {
+      "channel": "api",
+      "permission": "fileUpload",
+      "method": "POST",
+      "path": "/server/files/upload",
+      "send": {
+        "multipart": {
+          "fields": {
+            "root": "gcodes",
+            "path": "",
+            "print": "false"
+          },
+          "files": [
+            {
+              "field": "file",
+              "filename": "{{remoteFilename}}",
+              "bytesVariable": "gcodeBytes"
+            }
+          ]
+        }
+      }
+    },
+    "startNativePrint": {
+      "channel": "rpc",
+      "permission": "printStart",
+      "send": {
+        "json": {
+          "jsonrpc": "2.0",
+          "id": 4101,
+          "method": "server.files.start_local_print",
+          "params": {
+            "path": "{{remotePath}}",
+            "options": {
+              "flow_calibrate": "{{flowCalibration}}",
+              "flow_calibrate_extruders": "{{flowCalibrationExtruders}}",
+              "bed_level": "{{bedLevel}}",
+              "time_lapse_camera": "{{timelapseCapture}}",
+              "map_table": "{{mapTable}}"
+            }
+          }
+        }
+      },
+      "receive": {
+        "mode": "matching",
+        "until": {
+          "pathExistsAny": ["$.result.state", "$.error"]
+        },
+        "maxMessages": 30
+      }
+    },
+    "listFiles": {
+      "channel": "api",
+      "permission": "fileListRead",
+      "method": "GET",
+      "path": "/server/files/list",
+      "send": { "query": { "root": "gcodes" } },
+      "map": "files"
+    },
+    "listFilaments": {
+      "channel": "api",
+      "permission": "statusRead",
+      "method": "GET",
+      "path": "/printer/objects/query",
+      "send": {
+        "query": {
+          "print_task_config": "",
+          "filament_detect": ""
+        }
+      },
+      "map": "filaments"
+    },
+    "listPrintHistory": {
+      "channel": "api",
+      "permission": "fileListRead",
+      "method": "GET",
+      "path": "/server/history/list",
+      "send": {
+        "query": {
+          "limit": 100,
+          "order": "desc"
+        }
+      },
+      "map": "history"
+    },
+    "startCamera": {
+      "channel": "rpc",
+      "permission": "cameraRead",
+      "send": {
+        "json": {
+          "jsonrpc": "2.0",
+          "id": 4102,
+          "method": "camera.start_monitor",
+          "params": { "domain": "lan", "interval": 0 }
+        }
+      },
+      "receive": { "mode": "none" }
+    },
+    "pause": {
+      "channel": "api",
+      "permission": "printControl",
+      "method": "POST",
+      "path": "/printer/print/pause"
+    },
+    "resume": {
+      "channel": "api",
+      "permission": "printControl",
+      "method": "POST",
+      "path": "/printer/print/resume"
+    },
+    "cancel": {
+      "channel": "api",
+      "permission": "printControl",
+      "method": "POST",
+      "path": "/printer/print/cancel"
+    },
+    "setNozzleTemperature": {
+      "channel": "api",
+      "permission": "deviceControl",
+      "method": "POST",
+      "path": "/printer/gcode/script",
+      "send": { "json": { "script": "M104 S{{value}}" } }
+    },
+    "setBedTemperature": {
+      "channel": "api",
+      "permission": "deviceControl",
+      "method": "POST",
+      "path": "/printer/gcode/script",
+      "send": { "json": { "script": "M140 S{{value}}" } }
+    },
+    "setFan": {
+      "channel": "api",
+      "permission": "deviceControl",
+      "method": "POST",
+      "path": "/printer/gcode/script",
+      "send": { "json": { "script": "M106 S{{pwm}}" } }
+    },
+    "setSpeed": {
+      "channel": "api",
+      "permission": "deviceControl",
+      "method": "POST",
+      "path": "/printer/gcode/script",
+      "send": { "json": { "script": "M220 S{{value}}" } }
+    },
+    "move": {
+      "channel": "api",
+      "permission": "deviceControl",
+      "method": "POST",
+      "path": "/printer/gcode/script",
+      "send": {
+        "json": {
+          "script": "G91\nG0 {{axis}}{{distance}} F{{feedRate}}\nG90"
+        }
+      }
+    },
+    "home": {
+      "channel": "api",
+      "permission": "deviceControl",
+      "method": "POST",
+      "path": "/printer/gcode/script",
+      "send": { "json": { "script": "G28 {{axes}}" } }
+    }
+  },
+  "actions": {
+    "partFan": {
+      "operation": "setFan",
+      "arguments": {
+        "pwm": {
+          "from": "value",
+          "required": true,
+          "scale": 2.55,
+          "clamp": [0, 255],
+          "round": true
+        }
+      }
+    },
+    "speed": {
+      "operation": "setSpeed",
+      "arguments": {
+        "value": {
+          "from": "value",
+          "required": true,
+          "clamp": [25, 150],
+          "round": true
+        }
+      }
+    },
+    "move": {
+      "operation": "move",
+      "arguments": {
+        "axis": {
+          "from": "axis",
+          "required": true,
+          "uppercase": true,
+          "allowed": ["X", "Y", "Z"]
+        },
+        "distance": {
+          "from": "value",
+          "required": true,
+          "nonZero": true,
+          "clamp": [-100, 100]
+        },
+        "feedRate": {
+          "from": "axis",
+          "uppercase": true,
+          "enum": { "X": 3000, "Y": 3000, "Z": 600 }
+        }
+      }
+    },
+    "home": {
+      "operation": "home",
+      "arguments": {
+        "axes": {
+          "from": "axes",
+          "required": true,
+          "uppercase": true,
+          "allowed": ["X", "Y", "Z", "XY", "XZ", "YZ", "XYZ"]
+        }
+      }
+    }
+  },
+  "workflows": {
+    "uploadAndStart": {
+      "maxExecutedSteps": 20,
+      "steps": [
+        { "type": "emit", "stage": "uploading", "progress": 0 },
+        { "type": "operation", "operation": "uploadFile", "saveAs": "upload" },
+        { "type": "emit", "stage": "uploaded", "progress": 1 },
+        {
+          "type": "branch",
+          "condition": { "variable": "startPrint", "equals": true },
+          "then": [
+            {
+              "type": "set",
+              "name": "remotePath",
+              "value": "{{remoteFilename}}"
+            },
+            { "type": "emit", "stage": "startingPrint" },
+            {
+              "type": "operation",
+              "operation": "startNativePrint",
+              "saveAs": "start"
+            },
+            {
+              "type": "assert",
+              "condition": {
+                "path": "$.results.start.payload.result.state",
+                "equals": "success"
+              },
+              "message": "Snapmaker did not confirm print start."
+            }
+          ]
+        }
+      ]
+    },
+    "startPrint": {
+      "maxExecutedSteps": 10,
+      "steps": [
+        {
+          "type": "branch",
+          "condition": { "variable": "remotePath", "exists": false },
+          "then": [
+            {
+              "type": "set",
+              "name": "remotePath",
+              "value": "{{remoteFilename}}"
+            }
+          ]
+        },
+        {
+          "type": "operation",
+          "operation": "startNativePrint",
+          "saveAs": "start"
+        },
+        {
+          "type": "assert",
+          "condition": {
+            "path": "$.results.start.payload.result.state",
+            "equals": "success"
+          },
+          "message": "Snapmaker did not confirm print start."
+        }
+      ]
+    }
+  },
+  "state": {
+    "identity": {
+      "printer.identity.model": {
+        "paths": ["$.model", "$.machine_model", "$.product_name"],
+        "default": "Snapmaker U1"
+      },
+      "printer.identity.serial": {
+        "paths": ["$.serial", "$.serial_number", "$.sn"]
+      },
+      "printer.identity.firmware": {
+        "paths": ["$.firmware", "$.firmware_version", "$.version"]
+      }
+    },
+    "status": {
+      "printer.connection.state": {
+        "path": "$.result.status.print_stats.state",
+        "default": "connected"
+      },
+      "printer.job.state": "$.result.status.print_stats.state",
+      "printer.job.filename": "$.result.status.print_stats.filename",
+      "printer.job.progress": "$.result.status.virtual_sdcard.progress",
+      "printer.temperatures.nozzle.actual": "$.result.status.extruder.temperature",
+      "printer.temperatures.nozzle.target": "$.result.status.extruder.target",
+      "printer.temperatures.bed.actual": "$.result.status.heater_bed.temperature",
+      "printer.temperatures.bed.target": "$.result.status.heater_bed.target",
+      "printer.motion.position": {
+        "paths": [
+          "$.result.status.toolhead.position",
+          "$.result.status.gcode_move.gcode_position"
+        ]
+      },
+      "printer.fans": {
+        "compose": [
+          {
+            "$includeWhenAny": ["$.result.status.fan.speed"],
+            "id": { "value": "fan" },
+            "label": { "value": "Model fan" },
+            "role": { "value": "partCooling" },
+            "percent": {
+              "path": "$.result.status.fan.speed",
+              "scale": 100
+            },
+            "controllable": { "value": true }
+          }
+        ]
+      }
+    },
+    "files": {
+      "printer.files": {
+        "path": "$.result",
+        "default": [],
+        "items": {
+          "name": { "paths": ["$.path", "$.filename"] },
+          "path": { "paths": ["$.path", "$.filename"] },
+          "sizeBytes": "$.size",
+          "modifiedEpochSeconds": "$.modified"
+        }
+      }
+    },
+    "history": {
+      "printer.history": {
+        "path": "$.result.jobs",
+        "default": [],
+        "items": {
+          "id": "$.job_id",
+          "path": "$.filename",
+          "name": "$.filename",
+          "status": "$.status",
+          "startedEpochSeconds": "$.start_time",
+          "endedEpochSeconds": "$.end_time",
+          "durationSeconds": "$.print_duration",
+          "sizeBytes": "$.metadata.size",
+          "filamentLengthMm": "$.metadata.filament_total"
+        }
+      }
+    },
+    "filaments": {
+      "printer.filaments": {
+        "decoder": "snapmaker.printTaskConfig.v1"
+      }
+    }
+  },
+  "media": {
+    "controlPanel": {
+      "channel": "panel",
+      "path": "/"
+    },
+    "camera": {
+      "startOperation": "startCamera",
+      "candidates": [
+        {
+          "id": "snapmaker-u1-monitor",
+          "channel": "api",
+          "path": "/server/files/camera/monitor.jpg",
+          "kind": "snapshot",
+          "snapshotRefreshMs": 1000,
+          "cacheable": false
+        }
+      ]
+    }
+  },
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": { "en": "Printer status", "tr": "Yazıcı durumu" }
+          },
+          {
+            "id": "job",
+            "component": "activeJob",
+            "bind": "printer.job",
+            "title": { "en": "Active job", "tr": "Aktif iş" }
+          },
+          {
+            "id": "camera",
+            "component": "camera",
+            "bind": "printer.camera",
+            "title": { "en": "Camera", "tr": "Kamera" }
+          },
+          {
+            "id": "temperatures",
+            "component": "temperatureControls",
+            "bind": "printer.temperatures",
+            "title": { "en": "Temperatures", "tr": "Sıcaklıklar" }
+          },
+          {
+            "id": "fans",
+            "component": "fanControls",
+            "bind": "printer.fans",
+            "title": { "en": "Fans", "tr": "Fanlar" }
+          },
+          {
+            "id": "filaments",
+            "component": "filamentBay",
+            "bind": "printer.filaments",
+            "title": { "en": "Filaments", "tr": "Filamentler" }
+          },
+          {
+            "id": "motion",
+            "component": "motionControls",
+            "bind": "printer.motion",
+            "title": { "en": "Motion", "tr": "Hareket" }
+          },
+          {
+            "id": "files",
+            "component": "fileBrowser",
+            "bind": "printer.files",
+            "title": { "en": "Printer files", "tr": "Yazıcı dosyaları" }
+          },
+          {
+            "id": "history",
+            "component": "printHistory",
+            "bind": "printer.history",
+            "title": { "en": "Print history", "tr": "Baskı geçmişi" }
+          },
+          {
+            "id": "device-interface",
+            "component": "deviceInterface",
+            "bind": "printer",
+            "title": { "en": "Device interface", "tr": "Cihaz arayüzü" }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "fixtureOnly",
+    "testedOperations": [],
+    "untestedOperations": [
+      "probeProductInfo",
+      "status",
+      "uploadFile",
+      "startNativePrint",
+      "listFiles",
+      "listFilaments",
+      "listPrintHistory",
+      "startCamera",
+      "pause",
+      "resume",
+      "cancel",
+      "setNozzleTemperature",
+      "setBedTemperature",
+      "setFan",
+      "setSpeed",
+      "move",
+      "home"
+    ],
+    "testedWorkflows": []
+  }
+}
+

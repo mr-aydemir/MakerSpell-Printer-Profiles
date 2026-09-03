@@ -2,7 +2,7 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-u1-v2.experimental",
-  "version": "2.0.0-alpha.2",
+  "version": "2.0.0-alpha.3",
   "identity": {
     "name": "Snapmaker U1 v2 Experimental",
     "models": ["Snapmaker U1", "U1"],
@@ -218,28 +218,28 @@
       "permission": "deviceControl",
       "method": "POST",
       "path": "/printer/gcode/script",
-      "send": { "json": { "script": "M104 S{{value}}" } }
+      "send": { "query": { "script": "M104 S{{value}}" } }
     },
     "setBedTemperature": {
       "channel": "api",
       "permission": "deviceControl",
       "method": "POST",
       "path": "/printer/gcode/script",
-      "send": { "json": { "script": "M140 S{{value}}" } }
+      "send": { "query": { "script": "M140 S{{value}}" } }
     },
     "setFan": {
       "channel": "api",
       "permission": "deviceControl",
       "method": "POST",
       "path": "/printer/gcode/script",
-      "send": { "json": { "script": "M106 S{{pwm}}" } }
+      "send": { "query": { "script": "M106 S{{pwm}}" } }
     },
     "setSpeed": {
       "channel": "api",
       "permission": "deviceControl",
       "method": "POST",
       "path": "/printer/gcode/script",
-      "send": { "json": { "script": "M220 S{{value}}" } }
+      "send": { "query": { "script": "M220 S{{value}}" } }
     },
     "move": {
       "channel": "api",
@@ -247,7 +247,7 @@
       "method": "POST",
       "path": "/printer/gcode/script",
       "send": {
-        "json": {
+        "query": {
           "script": "G91\nG0 {{axis}}{{distance}} F{{feedRate}}\nG90"
         }
       }
@@ -257,7 +257,7 @@
       "permission": "deviceControl",
       "method": "POST",
       "path": "/printer/gcode/script",
-      "send": { "json": { "script": "G28 {{axes}}" } }
+      "send": { "query": { "script": "G28 {{axes}}" } }
     }
   },
   "actions": {

@@ -13,7 +13,9 @@
       "filamentSlots",
       "jobControl",
       "probe",
-      "status"
+      "startPrint",
+      "status",
+      "upload"
     ],
     "migration": {
       "sourceAdapter": "anycubic_lan",
@@ -28,8 +30,11 @@
     }
   },
   "permissions": [
+    "cameraRead",
     "deviceControl",
+    "fileUpload",
     "printControl",
+    "printStart",
     "statusRead"
   ],
   "credentials": {
@@ -136,7 +141,9 @@
       "filamentSlots",
       "jobControl",
       "probe",
-      "status"
+      "startPrint",
+      "status",
+      "upload"
     ]
   }
 }

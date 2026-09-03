@@ -3,7 +3,7 @@
   "profiles": [
     {
       "url": "../community/profiles/bridge-anycubic-lan-v2.json",
-      "sha256": "67c8593407c69abf84c43beab84a869bda882d1de9cb9123ea3aabe355fa3811"
+      "sha256": "d847add8e433a0ad5ef598ab6ce8f6a69958beefb571968c0597af334bf9eed9"
     },
     {
       "url": "../community/profiles/bridge-astrobox-v2.json",
@@ -43,7 +43,7 @@
     },
     {
       "url": "../community/profiles/bridge-moonraker-v2.json",
-      "sha256": "708fdea19b38058456b9e3aa11959c74d7e9740fcb1803810808eda507afc4e4"
+      "sha256": "25b2309f935c3fe65007fa690ce56c35d5445a2c8d55a3e0b748604fec5e48a3"
     },
     {
       "url": "../community/profiles/bridge-octoprint-v2.json",

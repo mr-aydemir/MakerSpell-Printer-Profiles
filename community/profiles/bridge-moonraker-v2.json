@@ -38,6 +38,7 @@
     }
   },
   "permissions": [
+    "cameraRead",
     "deviceControl",
     "fileListRead",
     "fileUpload",

@@ -2,11 +2,11 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-u1-v2.experimental",
-  "version": "2.0.0-alpha.9",
+  "version": "2.0.0",
   "identity": {
-    "name": "Snapmaker U1 v2 Experimental",
+    "name": "Snapmaker U1 v2 Community Verified",
     "models": ["Snapmaker U1", "U1"],
-    "status": "experimental",
+    "status": "communityVerified",
     "replaces": "snapmaker_moonraker",
     "extruderCount": 4,
     "delegateContracts": ["filamentSlotControl"],
@@ -755,9 +755,8 @@
     }
   },
   "verification": {
-    "level": "fixtureOnly",
-    "testedOperations": [],
-    "untestedOperations": [
+    "level": "deviceVerified",
+    "testedOperations": [
       "probeProductInfo",
       "status",
       "uploadFile",
@@ -779,6 +778,7 @@
       "move",
       "home"
     ],
-    "testedWorkflows": []
+    "untestedOperations": [],
+    "testedWorkflows": ["uploadAndStart", "startPrint"]
   }
 }

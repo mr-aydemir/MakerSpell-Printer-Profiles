@@ -154,7 +154,16 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "from": { "enum": ["value", "enabled", "axis", "axes", "fanId"] },
+            "from": {
+              "enum": [
+                "value",
+                "enabled",
+                "axis",
+                "axes",
+                "fanId",
+                "extruderIndex"
+              ]
+            },
             "value": {},
             "default": {},
             "scale": { "type": "number", "minimum": -100000, "maximum": 100000 },

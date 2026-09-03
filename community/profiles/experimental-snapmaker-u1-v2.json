@@ -2,12 +2,13 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-u1-v2.experimental",
-  "version": "2.0.0-alpha.7",
+  "version": "2.0.0-alpha.8",
   "identity": {
     "name": "Snapmaker U1 v2 Experimental",
     "models": ["Snapmaker U1", "U1"],
     "status": "experimental",
     "replaces": "snapmaker_moonraker",
+    "extruderCount": 4,
     "delegateContracts": ["filamentSlotControl"],
     "localFileMedia": {
       "channel": "api",
@@ -248,7 +249,14 @@
       "permission": "deviceControl",
       "method": "POST",
       "path": "/printer/gcode/script",
-      "send": { "query": { "script": "M104 S{{value}}" } }
+      "send": { "query": { "script": "M104 T{{extruderIndex}} S{{value}}" } }
+    },
+    "selectExtruder": {
+      "channel": "apiLong",
+      "permission": "deviceControl",
+      "method": "POST",
+      "path": "/printer/gcode/script",
+      "send": { "query": { "script": "T{{extruderIndex}}" } }
     },
     "setBedTemperature": {
       "channel": "api",
@@ -312,6 +320,22 @@
           "required": true,
           "scale": 2.55,
           "clamp": [0, 255],
+          "round": true
+        }
+      }
+    },
+    "nozzleTemperature": {
+      "operation": "setNozzleTemperature",
+      "arguments": {
+        "extruderIndex": {
+          "from": "extruderIndex",
+          "default": 0,
+          "allowed": [0, 1, 2, 3]
+        },
+        "value": {
+          "from": "value",
+          "required": true,
+          "clamp": [0, 350],
           "round": true
         }
       }
@@ -474,6 +498,43 @@
       "printer.motion.speedPercent": {
         "path": "$.result.status.gcode_move.speed_factor",
         "scale": 100
+      },
+      "printer.extruders.activeId": "$.result.status.toolhead.extruder",
+      "printer.extruders.items": {
+        "compose": [
+          {
+            "$includeWhenAny": ["$.result.status.extruder.temperature"],
+            "index": { "value": 0 },
+            "id": { "value": "extruder" },
+            "label": { "value": "T0" },
+            "temperature": "$.result.status.extruder.temperature",
+            "target": "$.result.status.extruder.target"
+          },
+          {
+            "$includeWhenAny": ["$.result.status.extruder1.temperature"],
+            "index": { "value": 1 },
+            "id": { "value": "extruder1" },
+            "label": { "value": "T1" },
+            "temperature": "$.result.status.extruder1.temperature",
+            "target": "$.result.status.extruder1.target"
+          },
+          {
+            "$includeWhenAny": ["$.result.status.extruder2.temperature"],
+            "index": { "value": 2 },
+            "id": { "value": "extruder2" },
+            "label": { "value": "T2" },
+            "temperature": "$.result.status.extruder2.temperature",
+            "target": "$.result.status.extruder2.target"
+          },
+          {
+            "$includeWhenAny": ["$.result.status.extruder3.temperature"],
+            "index": { "value": 3 },
+            "id": { "value": "extruder3" },
+            "label": { "value": "T3" },
+            "temperature": "$.result.status.extruder3.temperature",
+            "target": "$.result.status.extruder3.target"
+          }
+        ]
       },
       "printer.fans": {
         "compose": [
@@ -674,6 +735,7 @@
       "resume",
       "cancel",
       "setNozzleTemperature",
+      "selectExtruder",
       "setBedTemperature",
       "setFan",
       "setSpeed",

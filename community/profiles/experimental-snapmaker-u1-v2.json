@@ -2,7 +2,7 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-u1-v2.experimental",
-  "version": "2.0.0-alpha.3",
+  "version": "2.0.0-alpha.4",
   "identity": {
     "name": "Snapmaker U1 v2 Experimental",
     "models": ["Snapmaker U1", "U1"],
@@ -49,6 +49,13 @@
       "scheme": "http",
       "port": 7125,
       "timeoutMs": 8000,
+      "maxResponseBytes": 8388608
+    },
+    "apiLong": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 7125,
+      "timeoutMs": 60000,
       "maxResponseBytes": 8388608
     },
     "rpc": {
@@ -253,7 +260,7 @@
       }
     },
     "home": {
-      "channel": "api",
+      "channel": "apiLong",
       "permission": "deviceControl",
       "method": "POST",
       "path": "/printer/gcode/script",

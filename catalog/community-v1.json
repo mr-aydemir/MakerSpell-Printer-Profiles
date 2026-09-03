@@ -2,6 +2,70 @@
   "schemaVersion": 1,
   "profiles": [
     {
+      "url": "../community/profiles/bridge-anycubic-lan-v2.json",
+      "sha256": "67c8593407c69abf84c43beab84a869bda882d1de9cb9123ea3aabe355fa3811"
+    },
+    {
+      "url": "../community/profiles/bridge-astrobox-v2.json",
+      "sha256": "74622d232dc0b33476cc3309b4130987d3691b4e9c39dbd01720e4a205b17d10"
+    },
+    {
+      "url": "../community/profiles/bridge-bambu-lan-v2.json",
+      "sha256": "d2fa1e1b50774110383c134a9bef427c0fef827f9ac4331534958358028a8c10"
+    },
+    {
+      "url": "../community/profiles/bridge-duet-rrf-v2.json",
+      "sha256": "8d9a3a32a90e4b3220fce4cfb8508482f8d1b6395475e708a595b6a0ac3fb402"
+    },
+    {
+      "url": "../community/profiles/bridge-elegoo-link-cc2-v2.json",
+      "sha256": "9a5af88830a0bae402bc7908cd274d6483d041b1582741acd7c13fce335910b3"
+    },
+    {
+      "url": "../community/profiles/bridge-elegoo-sdcp-v2.json",
+      "sha256": "ff51a20df3ebd25fc22d02609728d42ca17ac11de38dc546af80eabd25fa7065"
+    },
+    {
+      "url": "../community/profiles/bridge-esp3d-v2.json",
+      "sha256": "d216eaf77c9fb56cc4ba995d9953ca6c14526420538ae62b8fbffe98988a0b72"
+    },
+    {
+      "url": "../community/profiles/bridge-flashair-v2.json",
+      "sha256": "f5f2558fe63d8f9e17a98998cb4a110c711343addc01b0165abcfe113486f289"
+    },
+    {
+      "url": "../community/profiles/bridge-flashforge-http-v2.json",
+      "sha256": "d06c8b1761689f083183df140af37373afa70ae3f908ee5d3d0dd12308662ac7"
+    },
+    {
+      "url": "../community/profiles/bridge-mks-v2.json",
+      "sha256": "bc41534168351f7593a83bf8a686460fba9ae4f80d2aac17320e907442ed1fe8"
+    },
+    {
+      "url": "../community/profiles/bridge-moonraker-v2.json",
+      "sha256": "708fdea19b38058456b9e3aa11959c74d7e9740fcb1803810808eda507afc4e4"
+    },
+    {
+      "url": "../community/profiles/bridge-octoprint-v2.json",
+      "sha256": "7c84aa784e88e33930e89b0b77813e2390703f2f8de1b842b6060b81fc4761cb"
+    },
+    {
+      "url": "../community/profiles/bridge-prusalink-v2.json",
+      "sha256": "091ba53f6e08aafa30adee342abacf93993bf40b08ef7f3be84f914d5820fc88"
+    },
+    {
+      "url": "../community/profiles/bridge-qidi-moonraker-v2.json",
+      "sha256": "1be79f4ec588e5dc392433796a164f0835d9db63997391248bca1ebf898a2c11"
+    },
+    {
+      "url": "../community/profiles/bridge-repetier-server-v2.json",
+      "sha256": "f9e2d661f03d209c1aee34de09b0bb4d943d757c4048d3a6ee840b5c8a01f3a1"
+    },
+    {
+      "url": "../community/profiles/example-declarative-http.json",
+      "sha256": "9fa5fcdd8f69dd3cfada914dd5ad9d33f1a5d08c1d58cf72f276f6e2e52a7499"
+    },
+    {
       "url": "../community/profiles/example-klipper.json",
       "sha256": "0efc17428eade24a4dea0bcf87b95d6039a0753751e49a1d3b169f0663c4c3d5"
     },

@@ -1,0 +1,154 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.bambu-lan-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "Bambu Lab LAN v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "bambu_lan",
+    "delegateContracts": [
+      "capabilities",
+      "deviceControl",
+      "dynamicPrintPreparation",
+      "filamentSlots",
+      "jobControl",
+      "printPreparation",
+      "probe",
+      "startPrint",
+      "status",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "bambu_lan",
+      "sourceFile": "makersync_app/lib/services/transports/bambu_lan_transport.dart",
+      "protocols": [
+        "MQTTS",
+        "FTPS"
+      ],
+      "authentication": "accessCode",
+      "probeSummary": "Authenticated Bambu LAN MQTT handshake.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "cameraRead",
+    "deviceControl",
+    "fileUpload",
+    "printControl",
+    "printStart",
+    "statusRead"
+  ],
+  "credentials": {
+    "type": "accessCode"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "bambuNative",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_bambu-lan._tcp.local"
+    ],
+    "ports": [
+      8883
+    ],
+    "probes": []
+  },
+  "channels": {
+    "control": {
+      "kind": "mqtt",
+      "scheme": "mqtts",
+      "port": 8883,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    },
+    "files": {
+      "kind": "ftp",
+      "scheme": "ftps",
+      "port": 990,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": {
+              "en": "Printer status",
+              "tr": "Yazıcı durumu"
+            }
+          },
+          {
+            "id": "activeJobControls",
+            "component": "activeJob",
+            "bind": "printer.job",
+            "title": {
+              "en": "Active job",
+              "tr": "Aktif iş"
+            }
+          },
+          {
+            "id": "deviceControls",
+            "component": "deviceControls",
+            "bind": "printer",
+            "title": {
+              "en": "Printer controls",
+              "tr": "Yazıcı kontrolleri"
+            }
+          },
+          {
+            "id": "camera",
+            "component": "camera",
+            "bind": "printer.camera",
+            "title": {
+              "en": "Camera",
+              "tr": "Kamera"
+            }
+          },
+          {
+            "id": "filaments",
+            "component": "filamentBay",
+            "bind": "printer.filaments",
+            "title": {
+              "en": "Filaments",
+              "tr": "Filamentler"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "protocolCompatible",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "deviceControl",
+      "dynamicPrintPreparation",
+      "filamentSlots",
+      "jobControl",
+      "printPreparation",
+      "probe",
+      "startPrint",
+      "status",
+      "upload"
+    ]
+  }
+}

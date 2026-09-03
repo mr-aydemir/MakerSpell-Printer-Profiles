@@ -1,0 +1,85 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.flashair-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "FlashAir v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "flashair",
+    "delegateContracts": [
+      "capabilities",
+      "filamentSlots",
+      "probe",
+      "status",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "flashair",
+      "sourceFile": "makersync_app/lib/services/transports/flashair_transport.dart",
+      "protocols": [
+        "HTTP"
+      ],
+      "authentication": "none",
+      "probeSummary": "FlashAir command endpoint signature.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "fileUpload"
+  ],
+  "credentials": {
+    "type": "none"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_flashair._tcp.local"
+    ],
+    "ports": [
+      80
+    ],
+    "probes": []
+  },
+  "channels": {
+    "primary": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 80,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": []
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "experimental",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "filamentSlots",
+      "probe",
+      "status",
+      "upload"
+    ]
+  }
+}

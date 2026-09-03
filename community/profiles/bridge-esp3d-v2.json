@@ -1,0 +1,97 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.esp3d-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "ESP3D v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "esp3d",
+    "delegateContracts": [
+      "capabilities",
+      "controlPanel",
+      "filamentSlots",
+      "probe",
+      "status",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "esp3d",
+      "sourceFile": "makersync_app/lib/services/transports/esp3d_transport.dart",
+      "protocols": [
+        "HTTP"
+      ],
+      "authentication": "optionalToken",
+      "probeSummary": "ESP3D command/status endpoint signature.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "fileUpload"
+  ],
+  "credentials": {
+    "type": "optionalToken"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_esp3d._tcp.local"
+    ],
+    "ports": [
+      80
+    ],
+    "probes": []
+  },
+  "channels": {
+    "primary": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 80,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "webControlPanel",
+            "component": "deviceInterface",
+            "bind": "printer.interface",
+            "title": {
+              "en": "Device interface",
+              "tr": "Cihaz arayüzü"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "experimental",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "controlPanel",
+      "filamentSlots",
+      "probe",
+      "status",
+      "upload"
+    ]
+  }
+}

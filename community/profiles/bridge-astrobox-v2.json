@@ -1,0 +1,122 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.astrobox-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "AstroBox v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "astrobox",
+    "delegateContracts": [
+      "capabilities",
+      "controlPanel",
+      "deviceControl",
+      "filamentSlots",
+      "probe",
+      "startPrint",
+      "status",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "astrobox",
+      "sourceFile": "makersync_app/lib/services/transports/astrobox_transport.dart",
+      "protocols": [
+        "HTTP"
+      ],
+      "authentication": "apiKey",
+      "probeSummary": "AstroBox API/version response.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "deviceControl",
+    "fileUpload",
+    "printStart",
+    "statusRead"
+  ],
+  "credentials": {
+    "type": "apiKey"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_astrobox._tcp.local"
+    ],
+    "ports": [
+      80
+    ],
+    "probes": []
+  },
+  "channels": {
+    "primary": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 80,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": {
+              "en": "Printer status",
+              "tr": "Yazıcı durumu"
+            }
+          },
+          {
+            "id": "deviceControls",
+            "component": "deviceControls",
+            "bind": "printer",
+            "title": {
+              "en": "Printer controls",
+              "tr": "Yazıcı kontrolleri"
+            }
+          },
+          {
+            "id": "webControlPanel",
+            "component": "deviceInterface",
+            "bind": "printer.interface",
+            "title": {
+              "en": "Device interface",
+              "tr": "Cihaz arayüzü"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "experimental",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "controlPanel",
+      "deviceControl",
+      "filamentSlots",
+      "probe",
+      "startPrint",
+      "status",
+      "upload"
+    ]
+  }
+}

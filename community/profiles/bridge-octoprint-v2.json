@@ -1,0 +1,133 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.octoprint-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "OctoPrint v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "octoprint",
+    "delegateContracts": [
+      "capabilities",
+      "controlPanel",
+      "deviceControl",
+      "filamentSlots",
+      "probe",
+      "startPrint",
+      "status",
+      "timelapses",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "octoprint",
+      "sourceFile": "makersync_app/lib/services/transports/octoprint_transport.dart",
+      "protocols": [
+        "OctoPrint HTTP"
+      ],
+      "authentication": "apiKey",
+      "probeSummary": "OctoPrint API/version response.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "deviceControl",
+    "fileUpload",
+    "printStart",
+    "statusRead"
+  ],
+  "credentials": {
+    "type": "apiKey"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_octoprint._tcp.local"
+    ],
+    "ports": [
+      5000
+    ],
+    "probes": []
+  },
+  "channels": {
+    "primary": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 5000,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": {
+              "en": "Printer status",
+              "tr": "Yazıcı durumu"
+            }
+          },
+          {
+            "id": "deviceControls",
+            "component": "deviceControls",
+            "bind": "printer",
+            "title": {
+              "en": "Printer controls",
+              "tr": "Yazıcı kontrolleri"
+            }
+          },
+          {
+            "id": "timelapses",
+            "component": "timelapses",
+            "bind": "printer.timelapses",
+            "title": {
+              "en": "Timelapses",
+              "tr": "Zaman atlamalı videolar"
+            }
+          },
+          {
+            "id": "webControlPanel",
+            "component": "deviceInterface",
+            "bind": "printer.interface",
+            "title": {
+              "en": "Device interface",
+              "tr": "Cihaz arayüzü"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "protocolCompatible",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "controlPanel",
+      "deviceControl",
+      "filamentSlots",
+      "probe",
+      "startPrint",
+      "status",
+      "timelapses",
+      "upload"
+    ]
+  }
+}

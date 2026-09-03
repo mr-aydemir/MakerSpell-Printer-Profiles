@@ -1,0 +1,107 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.elegoo-sdcp-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "Elegoo SDCP v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "elegoo_sdcp",
+    "delegateContracts": [
+      "capabilities",
+      "filamentSlots",
+      "probe",
+      "startPrint",
+      "status",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "elegoo_sdcp",
+      "sourceFile": "makersync_app/lib/services/transports/elegoo_sdcp_transport.dart",
+      "protocols": [
+        "HTTP",
+        "WebSocket"
+      ],
+      "authentication": "token",
+      "probeSummary": "SDCP v3 status handshake.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "fileUpload",
+    "printStart",
+    "statusRead"
+  ],
+  "credentials": {
+    "type": "token"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_sdcp._tcp.local"
+    ],
+    "ports": [
+      3030
+    ],
+    "probes": []
+  },
+  "channels": {
+    "web": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 3030,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    },
+    "control": {
+      "kind": "websocket",
+      "scheme": "ws",
+      "port": 3030,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": {
+              "en": "Printer status",
+              "tr": "Yazıcı durumu"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "experimental",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "filamentSlots",
+      "probe",
+      "startPrint",
+      "status",
+      "upload"
+    ]
+  }
+}

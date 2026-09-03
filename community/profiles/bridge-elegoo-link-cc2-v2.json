@@ -1,0 +1,85 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.elegoo-link-cc2-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "Elegoo Link (CC2) v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "elegoo_link_cc2",
+    "delegateContracts": [
+      "capabilities",
+      "filamentSlots",
+      "probe",
+      "status",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "elegoo_link_cc2",
+      "sourceFile": "makersync_app/lib/services/transports/elegoo_link_transport.dart",
+      "protocols": [
+        "HTTP"
+      ],
+      "authentication": "accessCode",
+      "probeSummary": "Elegoo Link discovery signature or CC2 API response.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "fileUpload"
+  ],
+  "credentials": {
+    "type": "accessCode"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_elegoo-link._tcp.local"
+    ],
+    "ports": [
+      80
+    ],
+    "probes": []
+  },
+  "channels": {
+    "primary": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 80,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": []
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "experimental",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "filamentSlots",
+      "probe",
+      "status",
+      "upload"
+    ]
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.qidi-moonraker-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "Qidi (Moonraker) v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "qidi_moonraker",
+    "delegateContracts": [
+      "capabilities",
+      "controlPanel",
+      "deviceControl",
+      "dynamicPrintPreparation",
+      "excludeObjects",
+      "extruderControl",
+      "filamentSlots",
+      "jobControl",
+      "localFiles",
+      "printHistory",
+      "printPreparation",
+      "probe",
+      "startPrint",
+      "status",
+      "timelapses",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "qidi_moonraker",
+      "sourceFile": "makersync_app/lib/services/transports/qidi_transport.dart",
+      "protocols": [
+        "Moonraker HTTP",
+        "Moonraker WebSocket"
+      ],
+      "authentication": "none",
+      "probeSummary": "Qidi printer.cfg signature on Moonraker.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "cameraRead",
+    "deviceControl",
+    "fileListRead",
+    "fileUpload",
+    "printControl",
+    "printStart",
+    "statusRead"
+  ],
+  "credentials": {
+    "type": "none"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_qidi-moonraker._tcp.local"
+    ],
+    "ports": [
+      7125,
+      10088
+    ],
+    "probes": []
+  },
+  "channels": {
+    "api": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 7125,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    },
+    "events": {
+      "kind": "websocket",
+      "scheme": "ws",
+      "port": 7125,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    },
+    "panel": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 10088,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": {
+              "en": "Printer status",
+              "tr": "Yazıcı durumu"
+            }
+          },
+          {
+            "id": "activeJobControls",
+            "component": "activeJob",
+            "bind": "printer.job",
+            "title": {
+              "en": "Active job",
+              "tr": "Aktif iş"
+            }
+          },
+          {
+            "id": "deviceControls",
+            "component": "deviceControls",
+            "bind": "printer",
+            "title": {
+              "en": "Printer controls",
+              "tr": "Yazıcı kontrolleri"
+            }
+          },
+          {
+            "id": "camera",
+            "component": "camera",
+            "bind": "printer.camera",
+            "title": {
+              "en": "Camera",
+              "tr": "Kamera"
+            }
+          },
+          {
+            "id": "localFiles",
+            "component": "fileBrowser",
+            "bind": "printer.files",
+            "title": {
+              "en": "Printer files",
+              "tr": "Yazıcı dosyaları"
+            }
+          },
+          {
+            "id": "excludeObjects",
+            "component": "excludeObjects",
+            "bind": "printer.job.objects",
+            "title": {
+              "en": "Exclude objects",
+              "tr": "Nesneleri baskıdan çıkar"
+            }
+          },
+          {
+            "id": "printHistory",
+            "component": "printHistory",
+            "bind": "printer.history",
+            "title": {
+              "en": "Print history",
+              "tr": "Baskı geçmişi"
+            }
+          },
+          {
+            "id": "timelapses",
+            "component": "timelapses",
+            "bind": "printer.timelapses",
+            "title": {
+              "en": "Timelapses",
+              "tr": "Zaman atlamalı videolar"
+            }
+          },
+          {
+            "id": "webControlPanel",
+            "component": "deviceInterface",
+            "bind": "printer.interface",
+            "title": {
+              "en": "Device interface",
+              "tr": "Cihaz arayüzü"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "verified",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "controlPanel",
+      "deviceControl",
+      "dynamicPrintPreparation",
+      "excludeObjects",
+      "extruderControl",
+      "filamentSlots",
+      "jobControl",
+      "localFiles",
+      "printHistory",
+      "printPreparation",
+      "probe",
+      "startPrint",
+      "status",
+      "timelapses",
+      "upload"
+    ]
+  }
+}

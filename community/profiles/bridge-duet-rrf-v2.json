@@ -1,0 +1,111 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.duet-rrf-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "Duet / RepRapFirmware v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "duet_rrf",
+    "delegateContracts": [
+      "capabilities",
+      "controlPanel",
+      "filamentSlots",
+      "probe",
+      "startPrint",
+      "status",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "duet_rrf",
+      "sourceFile": "makersync_app/lib/services/transports/duet_transport.dart",
+      "protocols": [
+        "RepRapFirmware HTTP"
+      ],
+      "authentication": "password",
+      "probeSummary": "RepRapFirmware rr_status/rr_model API response.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "fileUpload",
+    "printStart",
+    "statusRead"
+  ],
+  "credentials": {
+    "type": "password"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_duet._tcp.local",
+      "_reprap._tcp.local"
+    ],
+    "ports": [
+      80
+    ],
+    "probes": []
+  },
+  "channels": {
+    "primary": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 80,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": {
+              "en": "Printer status",
+              "tr": "Yazıcı durumu"
+            }
+          },
+          {
+            "id": "webControlPanel",
+            "component": "deviceInterface",
+            "bind": "printer.interface",
+            "title": {
+              "en": "Device interface",
+              "tr": "Cihaz arayüzü"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "protocolCompatible",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "controlPanel",
+      "filamentSlots",
+      "probe",
+      "startPrint",
+      "status",
+      "upload"
+    ]
+  }
+}

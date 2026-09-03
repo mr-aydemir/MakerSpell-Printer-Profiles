@@ -1,0 +1,112 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.repetier-server-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "Repetier Server v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "repetier_server",
+    "delegateContracts": [
+      "capabilities",
+      "controlPanel",
+      "filamentSlots",
+      "managedPrinters",
+      "probe",
+      "startPrint",
+      "status",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "repetier_server",
+      "sourceFile": "makersync_app/lib/services/transports/repetier_server_transport.dart",
+      "protocols": [
+        "Repetier Server HTTP"
+      ],
+      "authentication": "apiKey",
+      "probeSummary": "Repetier Server printer-list API response.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "fileUpload",
+    "printStart",
+    "statusRead"
+  ],
+  "credentials": {
+    "type": "apiKey"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_repetier-server._tcp.local"
+    ],
+    "ports": [
+      3344
+    ],
+    "probes": []
+  },
+  "channels": {
+    "primary": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 3344,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": {
+              "en": "Printer status",
+              "tr": "Yazıcı durumu"
+            }
+          },
+          {
+            "id": "webControlPanel",
+            "component": "deviceInterface",
+            "bind": "printer.interface",
+            "title": {
+              "en": "Device interface",
+              "tr": "Cihaz arayüzü"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "protocolCompatible",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "controlPanel",
+      "filamentSlots",
+      "managedPrinters",
+      "probe",
+      "startPrint",
+      "status",
+      "upload"
+    ]
+  }
+}

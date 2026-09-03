@@ -1,0 +1,96 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.flashforge-http-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "FlashForge LAN v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "flashforge_http",
+    "delegateContracts": [
+      "capabilities",
+      "filamentSlots",
+      "probe",
+      "status",
+      "upload"
+    ],
+    "migration": {
+      "sourceAdapter": "flashforge_http",
+      "sourceFile": "makersync_app/lib/services/transports/flashforge_transport.dart",
+      "protocols": [
+        "HTTP"
+      ],
+      "authentication": "none",
+      "probeSummary": "Modern FlashForge LAN product/status signature.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "fileUpload",
+    "statusRead"
+  ],
+  "credentials": {
+    "type": "none"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_flashforge-http._tcp.local"
+    ],
+    "ports": [
+      8898
+    ],
+    "probes": []
+  },
+  "channels": {
+    "primary": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 8898,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": {
+              "en": "Printer status",
+              "tr": "Yazıcı durumu"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "verified",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "filamentSlots",
+      "probe",
+      "status",
+      "upload"
+    ]
+  }
+}

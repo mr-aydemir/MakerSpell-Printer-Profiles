@@ -1,0 +1,142 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.anycubic-lan-v2.bridge",
+  "version": "2.0.0",
+  "identity": {
+    "name": "Anycubic LAN v2 Compatibility Bridge",
+    "status": "compatibilityBridge",
+    "replaces": "anycubic_lan",
+    "delegateContracts": [
+      "capabilities",
+      "deviceControl",
+      "filamentSlots",
+      "jobControl",
+      "probe",
+      "status"
+    ],
+    "migration": {
+      "sourceAdapter": "anycubic_lan",
+      "sourceFile": "makersync_app/lib/services/transports/anycubic_lan_transport.dart",
+      "protocols": [
+        "MQTT",
+        "HTTP"
+      ],
+      "authentication": "pairing",
+      "probeSummary": "Signed Anycubic LAN info query and advertised upload URL.",
+      "remainingWork": "Replace each declared delegate with schema-v2 operations, state mappings, workflows and conformance evidence."
+    }
+  },
+  "permissions": [
+    "deviceControl",
+    "printControl",
+    "statusRead"
+  ],
+  "credentials": {
+    "type": "pairing"
+  },
+  "supportedFileTypes": [
+    "gcode"
+  ],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": [
+      "_anycubic-lan._tcp.local"
+    ],
+    "ports": [
+      18910,
+      18088
+    ],
+    "probes": []
+  },
+  "channels": {
+    "handshake": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 18910,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    },
+    "upload": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 18088,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    },
+    "control": {
+      "kind": "mqtt",
+      "scheme": "mqtts",
+      "port": 9883,
+      "timeoutMs": 10000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "workflows": {},
+  "state": {},
+  "ui": {
+    "pages": {
+      "control": {
+        "layout": "adaptiveDashboard",
+        "sections": [
+          {
+            "id": "status",
+            "component": "printerStatus",
+            "bind": "printer.connection",
+            "title": {
+              "en": "Printer status",
+              "tr": "Yazıcı durumu"
+            }
+          },
+          {
+            "id": "activeJobControls",
+            "component": "activeJob",
+            "bind": "printer.job",
+            "title": {
+              "en": "Active job",
+              "tr": "Aktif iş"
+            }
+          },
+          {
+            "id": "deviceControls",
+            "component": "deviceControls",
+            "bind": "printer",
+            "title": {
+              "en": "Printer controls",
+              "tr": "Yazıcı kontrolleri"
+            }
+          },
+          {
+            "id": "filaments",
+            "component": "filamentBay",
+            "bind": "printer.filaments",
+            "title": {
+              "en": "Filaments",
+              "tr": "Filamentler"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "level": "compatibilityBridge",
+    "sourceSupportLevel": "experimental",
+    "testedOperations": [],
+    "untestedOperations": [
+      "capabilities",
+      "deviceControl",
+      "filamentSlots",
+      "jobControl",
+      "probe",
+      "status"
+    ]
+  }
+}

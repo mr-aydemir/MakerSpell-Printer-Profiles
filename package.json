@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node scripts/validate.mjs"
+    "test": "node scripts/validate.mjs",
+    "catalog:update": "node scripts/update-community-catalog.mjs"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

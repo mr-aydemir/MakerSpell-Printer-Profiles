@@ -16,6 +16,7 @@ Read it in order the first time; each page builds on the previous one.
 9. [Building a declarative driver](09-declarative-driver.md)
 10. [Full JSON printer driver v2 roadmap](10-full-json-driver-v2-roadmap.md)
 11. [V2 channels and actions](11-v2-channels-and-actions.md)
+12. [Built-in adapter migration matrix](12-built-in-adapter-migration.md)
 
 ## The shortest possible explanation
 
@@ -39,7 +40,8 @@ to propose a safe, declarative override for a printer or firmware variant.
 - [Community profile schema](../community/schema/profile.schema.json)
 - [Full JSON v2 profile schema](../community/schema/profile-v2.schema.json)
 - [Community-verified Creality Local v2 profile](../community/profiles/experimental-creality-local-v2.json)
-- [Experimental Snapmaker U1 v2 profile](../community/profiles/experimental-snapmaker-u1-v2.json)
+- [Community-verified Snapmaker U1 v2 profile](../community/profiles/experimental-snapmaker-u1-v2.json)
+- [Built-in adapter migration matrix](12-built-in-adapter-migration.md)
 - [Example Klipper profile](../community/profiles/example-klipper.json)
 - [Built-in adapter registry](../built-in/registry-v1.json)
 - [Contribution rules](../CONTRIBUTING.md)

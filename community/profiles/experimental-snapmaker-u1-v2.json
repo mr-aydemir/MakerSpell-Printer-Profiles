@@ -2,7 +2,7 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-u1-v2.experimental",
-  "version": "2.0.0-alpha.6",
+  "version": "2.0.0-alpha.7",
   "identity": {
     "name": "Snapmaker U1 v2 Experimental",
     "models": ["Snapmaker U1", "U1"],
@@ -106,6 +106,7 @@
           "extruder3": "",
           "heater_bed": "",
           "fan": "",
+          "fan_generic cavity_fan": "",
           "print_task_config": ""
         }
       },
@@ -261,7 +262,7 @@
       "permission": "deviceControl",
       "method": "POST",
       "path": "/printer/gcode/script",
-      "send": { "query": { "script": "M106 S{{pwm}}" } }
+      "send": { "query": { "script": "M106 P{{fanIndex}} S{{pwm}}" } }
     },
     "setSpeed": {
       "channel": "api",
@@ -293,6 +294,19 @@
     "partFan": {
       "operation": "setFan",
       "arguments": {
+        "fanIndex": {
+          "from": "fanId",
+          "default": "part",
+          "allowed": ["part", "model", "P0", "auxiliary", "assist", "P2"],
+          "enum": {
+            "part": 0,
+            "model": 0,
+            "P0": 0,
+            "auxiliary": 2,
+            "assist": 2,
+            "P2": 2
+          }
+        },
         "pwm": {
           "from": "value",
           "required": true,
@@ -465,11 +479,20 @@
         "compose": [
           {
             "$includeWhenAny": ["$.result.status.fan.speed"],
-            "id": { "value": "fan" },
-            "label": { "value": "Model fan" },
+            "id": { "value": "part" },
             "role": { "value": "partCooling" },
             "percent": {
               "path": "$.result.status.fan.speed",
+              "scale": 100
+            },
+            "controllable": { "value": true }
+          },
+          {
+            "$includeWhenAny": ["$.result.status['fan_generic cavity_fan'].speed"],
+            "id": { "value": "auxiliary" },
+            "role": { "value": "auxiliary" },
+            "percent": {
+              "path": "$.result.status['fan_generic cavity_fan'].speed",
               "scale": 100
             },
             "controllable": { "value": true }

@@ -2,7 +2,7 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-u1-v2.experimental",
-  "version": "2.0.0-alpha.5",
+  "version": "2.0.0-alpha.6",
   "identity": {
     "name": "Snapmaker U1 v2 Experimental",
     "models": ["Snapmaker U1", "U1"],
@@ -11,7 +11,13 @@
     "delegateContracts": ["filamentSlotControl"],
     "localFileMedia": {
       "channel": "api",
+      "metadataOperation": "getFileMetadata",
       "downloadPath": "/server/files/gcodes/{{fileName}}"
+    },
+    "timelapseMedia": {
+      "channel": "api",
+      "videoPath": "/server/files/camera/{{fileName}}",
+      "thumbnailPath": "/server/files/camera/{{gcodeBaseName}}.jpg"
     }
   },
   "permissions": [
@@ -163,6 +169,14 @@
       "send": { "query": { "root": "gcodes" } },
       "map": "files"
     },
+    "getFileMetadata": {
+      "channel": "api",
+      "permission": "fileListRead",
+      "method": "GET",
+      "path": "/server/files/metadata",
+      "send": { "query": { "filename": "{{filePath}}" } },
+      "map": "fileMetadata"
+    },
     "listFilaments": {
       "channel": "api",
       "permission": "statusRead",
@@ -188,6 +202,14 @@
         }
       },
       "map": "history"
+    },
+    "listTimelapses": {
+      "channel": "api",
+      "permission": "fileListRead",
+      "method": "GET",
+      "path": "/server/files/list",
+      "send": { "query": { "root": "camera" } },
+      "map": "timelapses"
     },
     "startCamera": {
       "channel": "rpc",
@@ -432,6 +454,13 @@
           "$.result.status.gcode_move.gcode_position"
         ]
       },
+      "printer.motion.axisMinimum": "$.result.status.toolhead.axis_minimum",
+      "printer.motion.axisMaximum": "$.result.status.toolhead.axis_maximum",
+      "printer.motion.homedAxes": "$.result.status.toolhead.homed_axes",
+      "printer.motion.speedPercent": {
+        "path": "$.result.status.gcode_move.speed_factor",
+        "scale": 100
+      },
       "printer.fans": {
         "compose": [
           {
@@ -460,6 +489,27 @@
         }
       }
     },
+    "fileMetadata": {
+      "printer.fileMetadata.sizeBytes": "$.result.size",
+      "printer.fileMetadata.modifiedEpochSeconds": "$.result.modified",
+      "printer.fileMetadata.durationSeconds": "$.result.estimated_time",
+      "printer.fileMetadata.filamentLengthMm": "$.result.filament_total",
+      "printer.fileMetadata.layerHeightMm": "$.result.layer_height",
+      "printer.fileMetadata.material": "$.result.filament_type",
+      "printer.fileMetadata.filamentColors": {
+        "paths": ["$.result.filament_colour", "$.result.filament_color"]
+      },
+      "printer.fileMetadata.filamentNames": "$.result.filament_name",
+      "printer.fileMetadata.thumbnails": {
+        "path": "$.result.thumbnails",
+        "default": [],
+        "items": {
+          "path": "$.relative_path",
+          "width": "$.width",
+          "height": "$.height"
+        }
+      }
+    },
     "history": {
       "printer.history": {
         "path": "$.result.jobs",
@@ -474,6 +524,18 @@
           "durationSeconds": "$.print_duration",
           "sizeBytes": "$.metadata.size",
           "filamentLengthMm": "$.metadata.filament_total"
+        }
+      }
+    },
+    "timelapses": {
+      "printer.timelapses": {
+        "path": "$.result",
+        "default": [],
+        "items": {
+          "name": "$.path",
+          "path": "$.path",
+          "sizeBytes": "$.size",
+          "modifiedEpochSeconds": "$.modified"
         }
       }
     },
@@ -556,6 +618,12 @@
             "title": { "en": "Print history", "tr": "Baskı geçmişi" }
           },
           {
+            "id": "timelapses",
+            "component": "timelapses",
+            "bind": "printer.timelapses",
+            "title": { "en": "Timelapses", "tr": "Zaman atlamalı videolar" }
+          },
+          {
             "id": "device-interface",
             "component": "deviceInterface",
             "bind": "printer",
@@ -574,8 +642,10 @@
       "uploadFile",
       "startNativePrint",
       "listFiles",
+      "getFileMetadata",
       "listFilaments",
       "listPrintHistory",
+      "listTimelapses",
       "startCamera",
       "pause",
       "resume",

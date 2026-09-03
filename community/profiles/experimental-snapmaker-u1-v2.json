@@ -2,7 +2,7 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-u1-v2.experimental",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "identity": {
     "name": "Snapmaker U1 v2 Experimental",
     "models": ["Snapmaker U1", "U1"],
@@ -507,16 +507,10 @@
             "title": { "en": "Camera", "tr": "Kamera" }
           },
           {
-            "id": "temperatures",
-            "component": "temperatureControls",
-            "bind": "printer.temperatures",
-            "title": { "en": "Temperatures", "tr": "Sıcaklıklar" }
-          },
-          {
-            "id": "fans",
-            "component": "fanControls",
-            "bind": "printer.fans",
-            "title": { "en": "Fans", "tr": "Fanlar" }
+            "id": "device-controls",
+            "component": "deviceControls",
+            "bind": "printer",
+            "title": { "en": "Printer controls", "tr": "Yazıcı kontrolleri" }
           },
           {
             "id": "filaments",
@@ -577,4 +571,3 @@
     "testedWorkflows": []
   }
 }
-

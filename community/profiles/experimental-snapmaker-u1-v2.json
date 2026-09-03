@@ -2,7 +2,7 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-u1-v2.experimental",
-  "version": "2.0.0-alpha.8",
+  "version": "2.0.0-alpha.9",
   "identity": {
     "name": "Snapmaker U1 v2 Experimental",
     "models": ["Snapmaker U1", "U1"],
@@ -108,6 +108,9 @@
           "heater_bed": "",
           "fan": "",
           "fan_generic cavity_fan": "",
+          "fan_generic e1_fan": "",
+          "fan_generic e2_fan": "",
+          "fan_generic e3_fan": "",
           "print_task_config": ""
         }
       },
@@ -542,8 +545,42 @@
             "$includeWhenAny": ["$.result.status.fan.speed"],
             "id": { "value": "part" },
             "role": { "value": "partCooling" },
+            "extruderIndex": { "value": 0 },
             "percent": {
               "path": "$.result.status.fan.speed",
+              "scale": 100
+            },
+            "controllable": { "value": true }
+          },
+          {
+            "$includeWhenAny": ["$.result.status['fan_generic e1_fan'].speed"],
+            "id": { "value": "part" },
+            "role": { "value": "partCooling" },
+            "extruderIndex": { "value": 1 },
+            "percent": {
+              "path": "$.result.status['fan_generic e1_fan'].speed",
+              "scale": 100
+            },
+            "controllable": { "value": true }
+          },
+          {
+            "$includeWhenAny": ["$.result.status['fan_generic e2_fan'].speed"],
+            "id": { "value": "part" },
+            "role": { "value": "partCooling" },
+            "extruderIndex": { "value": 2 },
+            "percent": {
+              "path": "$.result.status['fan_generic e2_fan'].speed",
+              "scale": 100
+            },
+            "controllable": { "value": true }
+          },
+          {
+            "$includeWhenAny": ["$.result.status['fan_generic e3_fan'].speed"],
+            "id": { "value": "part" },
+            "role": { "value": "partCooling" },
+            "extruderIndex": { "value": 3 },
+            "percent": {
+              "path": "$.result.status['fan_generic e3_fan'].speed",
               "scale": 100
             },
             "controllable": { "value": true }

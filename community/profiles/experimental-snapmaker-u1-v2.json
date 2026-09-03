@@ -2,7 +2,7 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-u1-v2.experimental",
-  "version": "2.0.0-alpha.4",
+  "version": "2.0.0-alpha.5",
   "identity": {
     "name": "Snapmaker U1 v2 Experimental",
     "models": ["Snapmaker U1", "U1"],
@@ -320,7 +320,19 @@
           "from": "axes",
           "required": true,
           "uppercase": true,
-          "allowed": ["X", "Y", "Z", "XY", "XZ", "YZ", "XYZ"]
+          "allowed": [
+            "X",
+            "Y",
+            "Z",
+            "X Y",
+            "X Z",
+            "Y Z",
+            "X Y Z",
+            "XY",
+            "XZ",
+            "YZ",
+            "XYZ"
+          ]
         }
       }
     }

@@ -6,6 +6,13 @@ remaining profiles start as explicit compatibility bridges so users can edit
 and review their discovery, protocol channels, permissions and UI composition
 without losing the behavior of the existing adapter.
 
+Device-verified profiles and compatibility bridges are enabled by default in
+MakerSpell when their model, discovery service, or existing adapter identity
+matches. Model allow-lists remain authoritative: a verified profile for one
+device cannot attach itself to another printer in the same manufacturer
+family. Compatibility bridges keep the native adapter as their runtime
+fallback and inherit its support level.
+
 A compatibility bridge is not a fully declarative driver. Its
 `identity.delegateContracts` list is the exact inventory of behavior still
 provided by compiled Dart code. Contributors should replace those entries one
@@ -40,7 +47,10 @@ then attach fixture and device-conformance evidence. A bridge must never use a
 5. Render the complete control page from registered JSON components.
 6. Pass static schema validation, fixture tests and mock protocol tests.
 7. Run guided tests on the declared model and firmware range.
-8. Remove only the contracts proven equivalent and update verification scope.
+8. Record which features worked or failed, then approve the tested profile
+   version in the app. Real-device confirmations help maintainers promote
+   reliable support for hardware they may not own.
+9. Remove only the contracts proven equivalent and update verification scope.
 
 This staged approach prevents a profile from claiming portability merely
 because its JSON parses, while still making every existing manufacturer

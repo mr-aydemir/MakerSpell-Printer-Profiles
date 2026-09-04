@@ -2,7 +2,7 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-u1-v2.experimental",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "identity": {
     "name": "Snapmaker U1 v2 Community Verified",
     "models": ["Snapmaker U1", "U1"],
@@ -38,7 +38,7 @@
     "calibrationMode": "unsupported",
     "autoLevelingMode": "transportManaged",
     "supportsFlowCalibration": true,
-    "supportsTimelapseCapture": false,
+    "supportsTimelapseCapture": true,
     "filamentMappingEncoder": "snapmaker.u1.map-table.v1",
     "gcodeTransformStrategy": "snapmaker.u1.native-task-options.v1"
   },
@@ -117,7 +117,7 @@
       "map": "status"
     },
     "uploadFile": {
-      "channel": "api",
+      "channel": "apiLong",
       "permission": "fileUpload",
       "method": "POST",
       "path": "/server/files/upload",

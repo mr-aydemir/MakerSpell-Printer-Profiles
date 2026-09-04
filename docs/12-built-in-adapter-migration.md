@@ -6,12 +6,14 @@ remaining profiles start as explicit compatibility bridges so users can edit
 and review their discovery, protocol channels, permissions and UI composition
 without losing the behavior of the existing adapter.
 
-Device-verified profiles and compatibility bridges are enabled by default in
-MakerSpell when their model, discovery service, or existing adapter identity
-matches. Model allow-lists remain authoritative: a verified profile for one
-device cannot attach itself to another printer in the same manufacturer
-family. Compatibility bridges keep the native adapter as their runtime
-fallback and inherit its support level.
+Compatibility bridges and profiles whose declared device-verification scope is
+complete are enabled by default in MakerSpell when their model, discovery
+service, or existing adapter identity matches. A profile that still lists
+untested operations or workflows remains opt-in and cannot silently replace a
+proven native adapter. Model allow-lists remain authoritative: a verified
+profile for one device cannot attach itself to another printer in the same
+manufacturer family. Compatibility bridges keep the native adapter as their
+runtime fallback and inherit its support level.
 
 A compatibility bridge is not a fully declarative driver. Its
 `identity.delegateContracts` list is the exact inventory of behavior still

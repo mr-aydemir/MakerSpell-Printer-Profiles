@@ -1,0 +1,66 @@
+{
+  "$schema": "../schema/profile-v2.schema.json",
+  "schemaVersion": 2,
+  "id": "community.snapmaker-2x0-v2.draft",
+  "version": "0.1.0",
+  "identity": {
+    "name": "Snapmaker 2.0 family (network draft)",
+    "models": ["Snapmaker A250", "Snapmaker A350", "Snapmaker Artisan"],
+    "status": "experimental",
+    "extruderCount": 1
+  },
+  "permissions": [
+    "statusRead",
+    "fileUpload",
+    "printStart",
+    "printControl",
+    "cameraRead"
+  ],
+  "credentials": {},
+  "supportedFileTypes": ["gcode"],
+  "printPreparation": {
+    "filamentMappingMode": "unsupported",
+    "calibrationMode": "unsupported",
+    "autoLevelingMode": "unsupported",
+    "supportsFlowCalibration": false,
+    "supportsTimelapseCapture": false
+  },
+  "discovery": {
+    "serviceTypes": ["_snapmaker-2x0._tcp.local", "_snapmaker._tcp.local"],
+    "ports": [8899, 8080],
+    "probes": []
+  },
+  "channels": {
+    "api": {
+      "kind": "websocket",
+      "scheme": "ws",
+      "port": 8899,
+      "path": "/",
+      "timeoutMs": 8000
+    },
+    "panel": {
+      "kind": "http",
+      "scheme": "http",
+      "port": 8080,
+      "timeoutMs": 5000,
+      "maxResponseBytes": 1048576
+    }
+  },
+  "operations": {},
+  "state": {
+    "identity": {
+      "printer.identity.model": {
+        "paths": ["$.model", "$.name"],
+        "default": "Snapmaker 2.0"
+      }
+    },
+    "status": {
+      "printer.connection.state": {
+        "value": "connected"
+      }
+    }
+  },
+  "verification": {
+    "level": "unverified"
+  }
+}

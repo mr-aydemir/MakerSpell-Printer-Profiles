@@ -17,6 +17,7 @@ Read it in order the first time; each page builds on the previous one.
 10. [Full JSON printer driver v2 roadmap](10-full-json-driver-v2-roadmap.md)
 11. [V2 channels and actions](11-v2-channels-and-actions.md)
 12. [Built-in adapter migration matrix](12-built-in-adapter-migration.md)
+13. [Snapmaker 2.0 network research](13-snapmaker-2x0-research.md)
 
 ## The shortest possible explanation
 

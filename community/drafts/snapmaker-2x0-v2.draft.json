@@ -2,21 +2,23 @@
   "$schema": "../schema/profile-v2.schema.json",
   "schemaVersion": 2,
   "id": "community.snapmaker-2x0-v2.draft",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "identity": {
-    "name": "Snapmaker 2.0 family (network draft)",
+    "name": "Snapmaker 2.0 family (LAN status)",
     "models": ["Snapmaker A250", "Snapmaker A350", "Snapmaker Artisan"],
     "status": "experimental",
     "extruderCount": 1
   },
   "permissions": [
-    "statusRead",
-    "fileUpload",
-    "printStart",
-    "printControl",
-    "cameraRead"
+    "statusRead"
   ],
-  "credentials": {},
+  "credentials": {
+    "token": {
+      "kind": "query",
+      "parameterName": "token",
+      "note": "Pairing token approved on the printer touchscreen via POST /api/v1/connect."
+    }
+  },
   "supportedFileTypes": ["gcode"],
   "printPreparation": {
     "filamentMappingMode": "unsupported",
@@ -26,41 +28,104 @@
     "supportsTimelapseCapture": false
   },
   "discovery": {
-    "serviceTypes": ["_snapmaker-2x0._tcp.local", "_snapmaker._tcp.local"],
-    "ports": [8899, 8080],
-    "probes": []
+    "serviceTypes": ["_snapmaker._tcp.local"],
+    "ports": [8080],
+    "probes": [
+      {
+        "operation": "probeStatus",
+        "weight": 5,
+        "required": true
+      }
+    ]
   },
   "channels": {
     "api": {
-      "kind": "websocket",
-      "scheme": "ws",
-      "port": 8899,
-      "path": "/",
-      "timeoutMs": 8000
-    },
-    "panel": {
       "kind": "http",
       "scheme": "http",
       "port": 8080,
-      "timeoutMs": 5000,
-      "maxResponseBytes": 1048576
+      "timeoutMs": 8000,
+      "maxResponseBytes": 8388608
     }
   },
-  "operations": {},
+  "operations": {
+    "probeStatus": {
+      "channel": "api",
+      "permission": "statusRead",
+      "method": "GET",
+      "path": "/api/v1/status",
+      "send": {
+        "query": {
+          "token": "{{token}}"
+        }
+      },
+      "map": "status"
+    },
+    "connect": {
+      "channel": "api",
+      "permission": "statusRead",
+      "method": "POST",
+      "path": "/api/v1/connect"
+    },
+    "enclosureStatus": {
+      "channel": "api",
+      "permission": "statusRead",
+      "method": "GET",
+      "path": "/api/v1/enclosure",
+      "send": {
+        "query": {
+          "token": "{{token}}"
+        }
+      },
+      "map": "enclosureStatus"
+    }
+  },
   "state": {
     "identity": {
       "printer.identity.model": {
-        "paths": ["$.model", "$.name"],
-        "default": "Snapmaker 2.0"
+        "paths": ["$.model", "$.machine_model"]
       }
     },
     "status": {
       "printer.connection.state": {
-        "value": "connected"
+        "path": "$.status",
+        "enum": {
+          "IDLE": "idle",
+          "RUNNING": "printing",
+          "PAUSED": "paused"
+        }
+      },
+      "printer.job.state": "$.status",
+      "printer.job.filename": "$.fileName",
+      "printer.job.progress": "$.progress",
+      "printer.job.elapsed": "$.elapsedTime",
+      "printer.job.remaining": "$.remainingTime",
+      "printer.temperatures.nozzle.actual": "$.nozzleTemperature",
+      "printer.temperatures.nozzle.target": "$.nozzleTargetTemperature",
+      "printer.temperatures.bed.actual": "$.heatedBedTemperature",
+      "printer.temperatures.bed.target": "$.heatedBedTargetTemperature",
+      "printer.motion.position": {
+        "paths": ["$.x", "$.y", "$.z"]
+      },
+      "printer.motion.homedAxes": "$.homed",
+      "printer.motion.feedRate": "$.workSpeed",
+      "printer.extruders.items": {
+        "compose": [
+          {
+            "index": { "value": 0 },
+            "id": { "value": "t0" },
+            "label": { "value": "Extruder" },
+            "temperature": "$.nozzleTemperature",
+            "target": "$.nozzleTargetTemperature"
+          }
+        ]
       }
     }
   },
   "verification": {
-    "level": "unverified"
+    "level": "unverified",
+    "notes": [
+      "Status/connect/enclosure endpoints reverse-engineered from community projects (NiteCrwlr/playground SNStatusV2, steffr.ch, Home Assistant forum). Pairing token and full status schema need confirmation on real firmware.",
+      "Print start, file upload and camera are not mapped yet. UDP discovery on port 20054 exists but the v2 schema has no UDP channel kind, so it is not expressed here."
+    ]
   }
 }

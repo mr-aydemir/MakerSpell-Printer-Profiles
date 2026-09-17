@@ -5,12 +5,17 @@
   "version": "0.2.0",
   "identity": {
     "name": "Snapmaker 2.0 family (LAN status)",
-    "models": ["Snapmaker A250", "Snapmaker A350", "Snapmaker Artisan"],
+    "models": [
+      "Snapmaker A250",
+      "Snapmaker A350",
+      "Snapmaker Artisan"
+    ],
     "status": "experimental",
     "extruderCount": 1
   },
   "permissions": [
-    "statusRead"
+    "statusRead",
+    "fileUpload"
   ],
   "credentials": {
     "token": {
@@ -19,7 +24,9 @@
       "note": "Pairing token approved on the printer touchscreen via POST /api/v1/connect."
     }
   },
-  "supportedFileTypes": ["gcode"],
+  "supportedFileTypes": [
+    "gcode"
+  ],
   "printPreparation": {
     "filamentMappingMode": "unsupported",
     "calibrationMode": "unsupported",
@@ -28,8 +35,12 @@
     "supportsTimelapseCapture": false
   },
   "discovery": {
-    "serviceTypes": ["_snapmaker._tcp.local"],
-    "ports": [8080],
+    "serviceTypes": [
+      "_snapmaker._tcp.local"
+    ],
+    "ports": [
+      8080
+    ],
     "probes": [
       {
         "operation": "probeStatus",
@@ -77,12 +88,35 @@
         }
       },
       "map": "enclosureStatus"
+    },
+    "uploadFile": {
+      "channel": "api",
+      "permission": "fileUpload",
+      "method": "POST",
+      "path": "/api/v1/upload",
+      "send": {
+        "query": {
+          "token": "{{token}}"
+        },
+        "multipart": {
+          "files": [
+            {
+              "field": "file",
+              "filename": "{{remoteFilename}}",
+              "bytesVariable": "gcodeBytes"
+            }
+          ]
+        }
+      }
     }
   },
   "state": {
     "identity": {
       "printer.identity.model": {
-        "paths": ["$.model", "$.machine_model"]
+        "paths": [
+          "$.model",
+          "$.machine_model"
+        ]
       }
     },
     "status": {
@@ -104,16 +138,26 @@
       "printer.temperatures.bed.actual": "$.heatedBedTemperature",
       "printer.temperatures.bed.target": "$.heatedBedTargetTemperature",
       "printer.motion.position": {
-        "paths": ["$.x", "$.y", "$.z"]
+        "paths": [
+          "$.x",
+          "$.y",
+          "$.z"
+        ]
       },
       "printer.motion.homedAxes": "$.homed",
       "printer.motion.feedRate": "$.workSpeed",
       "printer.extruders.items": {
         "compose": [
           {
-            "index": { "value": 0 },
-            "id": { "value": "t0" },
-            "label": { "value": "Extruder" },
+            "index": {
+              "value": 0
+            },
+            "id": {
+              "value": "t0"
+            },
+            "label": {
+              "value": "Extruder"
+            },
             "temperature": "$.nozzleTemperature",
             "target": "$.nozzleTargetTemperature"
           }
@@ -124,9 +168,9 @@
   "verification": {
     "level": "unverified",
     "notes": [
-    "Status/connect/enclosure endpoints reverse-engineered from community projects (NiteCrwlr/playground SNStatusV2, steffr.ch, Home Assistant forum). Pairing token and full status schema need confirmation on real firmware.",
-    "Print start, file upload and camera are not mapped yet. UDP discovery on port 20054 exists but the v2 schema has no UDP channel kind, so it is not expressed here.",
-    "SSTP binary control plane (Snapmaker2-Controller): event_id 7 SYS_CTRL, op-codes 3 START_WORK, 4 PAUSE, 5 RESUME, 6 STOP, 1 GET_STATUSES. Firmware transport is UART-to-HMI; LAN reachability over TCP is unconfirmed, so these are documented in the research note and intentionally not added as operations."
-  ]
-}
+      "Status/connect/enclosure endpoints reverse-engineered from community projects (NiteCrwlr/playground SNStatusV2, steffr.ch, Home Assistant forum). Pairing token and full status schema need confirmation on real firmware.",
+      "Print start, file upload and camera are not mapped yet. UDP discovery on port 20054 exists but the v2 schema has no UDP channel kind, so it is not expressed here.",
+      "SSTP binary control plane (Snapmaker2-Controller): event_id 7 SYS_CTRL, op-codes 3 START_WORK, 4 PAUSE, 5 RESUME, 6 STOP, 1 GET_STATUSES. Firmware transport is UART-to-HMI; LAN reachability over TCP is unconfirmed, so these are documented in the research note and intentionally not added as operations."
+    ]
+  }
 }

@@ -8,6 +8,27 @@ Status: draft / unverified. Working start point for Snapmaker 2.0 LAN, not a ful
 - HTTP API on port 8080: `POST /api/v1/connect` (pairing token), `GET /api/v1/status?token=` (state, nozzle/bed temps, position, progress, enclosure), `GET /api/v1/enclosure?token=` (door/led/fan).
 - Auth: a token approved once on the touchscreen stays valid (Home Assistant forum).
 
+
+## File upload and the 8080 command surface (confirmed)
+
+A community upload script (zvalentine22 gist) confirms the 8080 API is not
+read-only. Endpoints:
+
+- `POST /api/v1/connect` - returns a JSON token.
+- `GET /api/v1/status?token=` - returns 200 when ready, 204 while busy/not
+  yet authorized (the client polls until 200 before uploading).
+- `POST /api/v1/upload?token=` with multipart field `file` - uploads a
+  .gcode file.
+
+So the LAN surface is **connect / status / upload** at minimum. This matches
+Luban's "Transfer via Wi-Fi" flow (the official slicer UI) and the Snapmaker
+forum request "File Transfer via WiFi". Print start/pause/resume/stop verbs
+are still not confirmed on this HTTP surface; the SSTP SYS_CTRL op-codes
+remain the low-level path.
+
+The draft profile now exposes `uploadFile` (fileUpload) alongside status
+reads.
+
 ## Vendor firmware and the SSTP binary protocol
 
 Snapmaker/Snapmaker2-Controller is Marlin-based 2.0 firmware. It exposes the low-level control plane over a binary protocol, SSTP (snapmaker/src/common/protocol_sstp.*).

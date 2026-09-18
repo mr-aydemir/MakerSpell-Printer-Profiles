@@ -8,7 +8,9 @@
     "models": [
       "Snapmaker A250",
       "Snapmaker A350",
-      "Snapmaker Artisan"
+      "Snapmaker Artisan",
+      "Snapmaker A150",
+      "Snapmaker J1"
     ],
     "status": "experimental",
     "extruderCount": 1
@@ -39,6 +41,7 @@
       "_snapmaker._tcp.local"
     ],
     "ports": [
+      8888,
       8080
     ],
     "probes": [
@@ -170,7 +173,8 @@
     "notes": [
       "Status/connect/enclosure endpoints reverse-engineered from community projects (NiteCrwlr/playground SNStatusV2, steffr.ch, Home Assistant forum). Pairing token and full status schema need confirmation on real firmware.",
       "Print start, file upload and camera are not mapped yet. UDP discovery on port 20054 exists but the v2 schema has no UDP channel kind, so it is not expressed here.",
-      "SSTP binary control plane (Snapmaker2-Controller): event_id 7 SYS_CTRL, op-codes 3 START_WORK, 4 PAUSE, 5 RESUME, 6 STOP, 1 GET_STATUSES. Firmware transport is UART-to-HMI; LAN reachability over TCP is unconfirmed, so these are documented in the research note and intentionally not added as operations."
+      "SSTP binary control plane (Snapmaker2-Controller): event_id 7 SYS_CTRL, op-codes 3 START_WORK, 4 PAUSE, 5 RESUME, 6 STOP, 1 GET_STATUSES. Firmware transport is UART-to-HMI; LAN reachability over TCP is unconfirmed, so these are documented in the research note and intentionally not added as operations.",
+      "Authoritative control plane is SACP over TCP 8888 (startPrint 0xac/0x03, pause 0xac/0x04, resume 0xac/0x05, stop 0xac/0x06). See docs/13-snapmaker-2x0-research.md."
     ]
   }
 }

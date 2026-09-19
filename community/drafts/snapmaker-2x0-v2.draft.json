@@ -59,6 +59,29 @@
       "port": 8080,
       "timeoutMs": 8000,
       "maxResponseBytes": 8388608
+    },
+    "sacp": {
+      "kind": "tcp",
+      "scheme": "tcp",
+      "port": 8888,
+      "timeoutMs": 8000,
+      "lifecycle": "session",
+      "framing": {
+        "mode": "sacp",
+        "sof": "AA 55",
+        "lengthBytes": 2,
+        "lengthEndian": "big",
+        "lengthIncludesSize": false,
+        "headerSize": 13,
+        "byteOrder": "big",
+        "crc": {
+          "type": "crc8",
+          "offset": 6,
+          "length": 1,
+          "polynomial": 0
+        },
+        "maxResponseBytes": 8388608
+      }
     }
   },
   "operations": {
